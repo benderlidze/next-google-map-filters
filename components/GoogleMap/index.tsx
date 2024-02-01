@@ -104,6 +104,13 @@ export const GoogleMap = () => {
           disableDefaultUI={true}
           style={{ borderRadius: "20px", border: "none" }}
           //styles={GrayStyle}
+          fullscreenControl={false}
+          mapTypeControl={false}
+          streetViewControl={false}
+          zoomControl={true}
+          zoomControlOptions={{
+            position: google.maps.ControlPosition.TOP_RIGHT,
+          }}
         >
           {markers.length > 0 &&
             markers.map((marker) => {
