@@ -12,9 +12,12 @@ export const PropertyCard = ({ marker }: PropertyCardProps) => {
   };
 
   return (
-    <div className="flex flex-col w-[250px]  bg-white rounded-lg shadow-lg p-4">
+    <div className="flex flex-col w-[240px] bg-white rounded-xl shadow-lg p-3">
       <div className="relative">
-        <img src={thumbnail} className="rounded-lg h-[218px] w-218x" />
+        <img
+          src={thumbnail}
+          className="rounded-lg h-[218px] w-218x bg-slate-300"
+        />
         <div className="absolute top-2 left-2 ">
           <div className="bg-white flex flex-row p-2 rounded-lg align-middle gap-2">
             <svg

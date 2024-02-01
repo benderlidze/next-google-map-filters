@@ -1,16 +1,14 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import { GrayStyle } from "@components/GoogleMapStyle";
 
 import {
   AdvancedMarker,
   APIProvider,
-  InfoWindow,
   Map,
   Marker,
-  Pin,
 } from "@vis.gl/react-google-maps";
-import { PropertyCard } from "../PropertyCard";
+import { PropertyCard } from "@components/PropertyCard";
+import { IFilter, POIFilter } from "@components/POIFilter";
 
 export type MapConfig = {
   id: string;
@@ -31,6 +29,19 @@ export type Marker = {
   longitude: number;
   state: string;
 };
+
+const poiList = [
+  { name: "Restaurants", id: 0, icon: "", selected: true },
+  { name: "Grocery Store", id: 0, icon: "", selected: true },
+  { name: "Parking Lot", id: 0, icon: "", selected: true },
+  { name: "Train Station", id: 0, icon: "", selected: true },
+  { name: "Bakery", id: 0, icon: "", selected: true },
+  { name: "Park", id: 0, icon: "", selected: true },
+  { name: "Light Rail", id: 0, icon: "", selected: true },
+  { name: "School", id: 0, icon: "", selected: true },
+  { name: "Shops", id: 0, icon: "", selected: true },
+  { name: "Museum", id: 0, icon: "", selected: true },
+] as IFilter[];
 
 const MapOverlay = ({
   closeClick,
@@ -58,6 +69,8 @@ const MapOverlay = ({
 export const GoogleMap = () => {
   const [markers, setMarkers] = useState<Marker[]>([]);
   const [activeMarker, setActiveMarker] = useState<Marker | null>(null);
+  const [filtersOpen, setFiltersOpen] = useState(false);
+  const [filtersList, setFiltersList] = useState<IFilter[]>(poiList);
 
   const fetchData = async () => {
     const res = await fetch("data.json");
@@ -65,7 +78,6 @@ export const GoogleMap = () => {
     console.log(data);
     const locations = data?.data?.livingLocations?.collection;
     if (locations?.length > 0) {
-      console.log("111", 111);
       setMarkers(locations);
     }
   };
@@ -126,6 +138,21 @@ export const GoogleMap = () => {
               <PropertyCard marker={activeMarker} />
             </MapOverlay>
           )}
+
+          <div className="absolute left-1/2 transform -translate-x-1/2 w-fit bottom-5 flex flex-col items-center justify-center gap-2">
+            {filtersOpen && (
+              <POIFilter
+                poiList={filtersList}
+                setFiltersList={setFiltersList}
+              />
+            )}
+            <div
+              onClick={() => setFiltersOpen(!filtersOpen)}
+              className="bg-slate-700 w-fit select-none py-2 px-4 rounded-xl text-white cursor-pointer"
+            >
+              Map Settings &#9660;
+            </div>
+          </div>
         </Map>
       </APIProvider>
     </div>
