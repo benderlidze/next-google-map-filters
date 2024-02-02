@@ -137,6 +137,36 @@ export const GoogleMap = () => {
           // }}
           onClick={handleMapClick}
         >
+          {POIList.length > 0 &&
+            POIList.filter((poi) => {
+              const filter = filtersList.find((f) => f.name === poi.category);
+              return filter?.selected;
+            }).map((poiMarker) => {
+              const { name, lat, lon: lng } = poiMarker;
+              return (
+                <AdvancedMarker
+                  position={{ lat: +lat, lng: +lng }}
+                  onClick={() => setActivePOI(poiMarker)}
+                  key={poiMarker.name}
+                >
+                  <div
+                    style={{
+                      width: 12,
+                      height: 12,
+                      position: "absolute",
+                      top: 0,
+                      left: 0,
+                      background: "blue",
+                      border: "1px solid white",
+                      borderRadius: "50%",
+                      transform: "translate(-50%, -50%)",
+                      cursor: "pointer",
+                    }}
+                  ></div>
+                </AdvancedMarker>
+              );
+            })}
+
           {markers.length > 0 &&
             markers.map((marker) => {
               const { id, latitude: lat, longitude: lng } = marker;
@@ -153,38 +183,8 @@ export const GoogleMap = () => {
                       position: "absolute",
                       top: 0,
                       left: 0,
-                      background: "white",
-                      border: "2px solid red",
-                      borderRadius: "50%",
-                      transform: "translate(-50%, -50%)",
-                      cursor: "pointer",
-                    }}
-                  ></div>
-                </AdvancedMarker>
-              );
-            })}
-
-          {POIList.length > 0 &&
-            POIList.filter((poi) => {
-              const filter = filtersList.find((f) => f.name === poi.category);
-              return filter?.selected;
-            }).map((poiMarker) => {
-              const { name, lat, lon: lng } = poiMarker;
-              return (
-                <AdvancedMarker
-                  position={{ lat: +lat, lng: +lng }}
-                  onClick={() => setActivePOI(poiMarker)}
-                  key={poiMarker.name}
-                >
-                  <div
-                    style={{
-                      width: 16,
-                      height: 16,
-                      position: "absolute",
-                      top: 0,
-                      left: 0,
-                      background: "orange",
-                      border: "2px solid green",
+                      background: "red",
+                      border: "1px solid white",
                       borderRadius: "50%",
                       transform: "translate(-50%, -50%)",
                       cursor: "pointer",
