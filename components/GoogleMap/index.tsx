@@ -89,6 +89,9 @@ export const GoogleMap = () => {
   const handleMarkerClick = (marker: Marker) => {
     setActiveMarker(marker);
   };
+  const handleMapClick = () => {
+    setFiltersOpen(false);
+  };
 
   return (
     <div className="w-full h-[600px] ">
@@ -108,9 +111,11 @@ export const GoogleMap = () => {
           mapTypeControl={false}
           streetViewControl={false}
           zoomControl={true}
-          zoomControlOptions={{
-            position: google.maps.ControlPosition.TOP_RIGHT,
-          }}
+          // zoomControlOptions={{
+          //    position: google.maps.ControlPosition.TOP_RIGHT,
+          //   position: 23.0,
+          // }}
+          onClick={handleMapClick}
         >
           {markers.length > 0 &&
             markers.map((marker) => {
