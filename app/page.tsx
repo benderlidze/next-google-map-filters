@@ -1,6 +1,4 @@
 import { GoogleMap } from "@/components/GoogleMap";
-import Google from "next-auth/providers/google";
-import Image from "next/image";
 
 export default function Home() {
   return (
