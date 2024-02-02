@@ -116,7 +116,7 @@ export const GoogleMap = () => {
   return (
     <div className="w-full h-[600px] ">
       <APIProvider
-        apiKey={"AIzaSyBvYLAK_A0uhFuVPQbTxUdVWbb_Lsur9cg"}
+        apiKey={"AIzaSyBgRiwSQWAPRczno7mLA23gRA8J02uiR-U"}
         libraries={["marker"]}
       >
         <Map
