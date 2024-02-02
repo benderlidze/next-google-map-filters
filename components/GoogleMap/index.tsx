@@ -9,6 +9,7 @@ import {
 } from "@vis.gl/react-google-maps";
 import { PropertyCard } from "@components/PropertyCard";
 import { IFilter, POIFilter } from "@components/POIFilter";
+import { POICard } from "@components/POICard";
 
 export type MapConfig = {
   id: string;
@@ -16,6 +17,13 @@ export type MapConfig = {
   mapId?: string;
   mapTypeId?: string;
   styles?: google.maps.MapTypeStyle[];
+};
+export type IPOI = {
+  name: string;
+  category: string;
+  lat: string;
+  lon: string;
+  description: string;
 };
 
 export type Marker = {
@@ -30,7 +38,7 @@ export type Marker = {
   state: string;
 };
 
-const poiList = [
+const poiFiltersList = [
   { name: "Restaurants", id: 0, icon: "", selected: true },
   { name: "Grocery Store", id: 0, icon: "", selected: true },
   { name: "Parking Lot", id: 0, icon: "", selected: true },
@@ -68,22 +76,34 @@ const MapOverlay = ({
 
 export const GoogleMap = () => {
   const [markers, setMarkers] = useState<Marker[]>([]);
+  const [POIList, setPOIList] = useState<IPOI[]>([]);
+
   const [activeMarker, setActiveMarker] = useState<Marker | null>(null);
+  const [activePOI, setActivePOI] = useState<IPOI | null>(null);
+
   const [filtersOpen, setFiltersOpen] = useState(false);
-  const [filtersList, setFiltersList] = useState<IFilter[]>(poiList);
+  const [filtersList, setFiltersList] = useState<IFilter[]>(poiFiltersList);
 
   const fetchData = async () => {
     const res = await fetch("data.json");
     const data = await res.json();
-    console.log(data);
     const locations = data?.data?.livingLocations?.collection;
     if (locations?.length > 0) {
       setMarkers(locations);
     }
   };
 
+  const fetchPOI = async () => {
+    const res = await fetch("poi.json");
+    const poi = await res.json();
+    if (poi?.length > 0) {
+      setPOIList(poi);
+    }
+  };
+
   useEffect(() => {
     fetchData();
+    fetchPOI();
   }, []);
 
   const handleMarkerClick = (marker: Marker) => {
@@ -120,7 +140,6 @@ export const GoogleMap = () => {
           {markers.length > 0 &&
             markers.map((marker) => {
               const { id, latitude: lat, longitude: lng } = marker;
-
               return (
                 <AdvancedMarker
                   position={{ lat: +lat, lng: +lng }}
@@ -144,6 +163,42 @@ export const GoogleMap = () => {
                 </AdvancedMarker>
               );
             })}
+
+          {POIList.length > 0 &&
+            POIList.filter((poi) => {
+              const filter = filtersList.find((f) => f.name === poi.category);
+              return filter?.selected;
+            }).map((poiMarker) => {
+              const { name, lat, lon: lng } = poiMarker;
+              return (
+                <AdvancedMarker
+                  position={{ lat: +lat, lng: +lng }}
+                  onClick={() => setActivePOI(poiMarker)}
+                  key={poiMarker.name}
+                >
+                  <div
+                    style={{
+                      width: 16,
+                      height: 16,
+                      position: "absolute",
+                      top: 0,
+                      left: 0,
+                      background: "orange",
+                      border: "2px solid green",
+                      borderRadius: "50%",
+                      transform: "translate(-50%, -50%)",
+                      cursor: "pointer",
+                    }}
+                  ></div>
+                </AdvancedMarker>
+              );
+            })}
+
+          {activePOI && !activeMarker && (
+            <MapOverlay closeClick={() => setActivePOI(null)}>
+              <POICard poiData={activePOI} />
+            </MapOverlay>
+          )}
 
           {activeMarker && (
             <MapOverlay closeClick={() => setActiveMarker(null)}>
