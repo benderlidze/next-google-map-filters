@@ -6,10 +6,13 @@ import {
   APIProvider,
   Map,
   Marker,
+  ControlPosition,
+  useApiIsLoaded,
 } from "@vis.gl/react-google-maps";
 import { PropertyCard } from "@components/PropertyCard";
 import { IFilter, POIFilter } from "@components/POIFilter";
 import { POICard } from "@components/POICard";
+import { AutocompletePlaces } from "@components/Directions";
 
 export type MapConfig = {
   id: string;
@@ -117,7 +120,7 @@ export const GoogleMap = () => {
     <div className="w-full h-[600px] ">
       <APIProvider
         apiKey={process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || ""}
-        libraries={["marker"]}
+        libraries={["places"]}
       >
         <Map
           mapId={"bf51a910020fa25a"}
@@ -126,15 +129,13 @@ export const GoogleMap = () => {
           gestureHandling={"greedy"}
           disableDefaultUI={true}
           style={{ borderRadius: "20px", border: "none" }}
-          //styles={GrayStyle}
           fullscreenControl={false}
           mapTypeControl={false}
           streetViewControl={false}
           zoomControl={true}
-          // zoomControlOptions={{
-          //    position: google.maps.ControlPosition.TOP_RIGHT,
-          //   position: 23.0,
-          // }}
+          zoomControlOptions={{
+            position: ControlPosition.TOP_RIGHT,
+          }}
           onClick={handleMapClick}
         >
           {POIList.length > 0 &&
@@ -221,6 +222,7 @@ export const GoogleMap = () => {
             </div>
           </div>
         </Map>
+        <AutocompletePlaces />
       </APIProvider>
     </div>
   );
