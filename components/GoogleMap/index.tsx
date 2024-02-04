@@ -1,10 +1,11 @@
 "use client";
 import React, { useState } from "react";
 import { APIProvider, Map, ControlPosition } from "@vis.gl/react-google-maps";
-import { AutocompletePlaces } from "@components/Directions";
 import { Markers } from "@components/Markers";
-import { POIMArkers } from "../POIMarkers";
+import { POIMArkers } from "@components/POIMarkers";
 import { Filter, PropertyFilters } from "@components/PropertyFilters";
+import { Route } from "@components/Route";
+import { DirectionsRenderer } from "../DirectionRender";
 
 export type MapConfig = {
   id: string;
@@ -23,7 +24,10 @@ const filterInit = {
 
 export const GoogleMap = () => {
   const [markerFilter, setMarkerFilter] = useState<Filter>(filterInit);
+  const [geometryRoute, setGeometryRoute] =
+    useState<google.maps.DirectionsResult | null>(null);
 
+  console.log("geometryRoute", geometryRoute);
   return (
     <div className="flex flex-col gap-3 w-full h-[700px] ">
       <PropertyFilters
@@ -52,8 +56,10 @@ export const GoogleMap = () => {
         >
           <POIMArkers />
           <Markers markerFilter={markerFilter} />
+          <DirectionsRenderer route={geometryRoute} />
         </Map>
-        <AutocompletePlaces />
+
+        <Route setGeometryRoute={setGeometryRoute} />
       </APIProvider>
     </div>
   );
