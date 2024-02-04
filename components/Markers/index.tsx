@@ -15,6 +15,8 @@ export type Marker = {
   longitude: number;
   state: string;
 
+  properties: any;
+
   bedrooms: number;
   bathrooms: number;
   sqFt: number;
@@ -64,13 +66,31 @@ export const Markers = ({ markerFilter }: MarkersProps) => {
   }, [markerFilter]);
 
   const filterMarkers = () => {
+    console.log("markerFilter", markerFilter);
     if (markerFilter) {
       const filteredMarkers = markers.filter((marker) => {
-        const { bedrooms, bathrooms } = markerFilter;
+        const { bedrooms, bathrooms, propertyType } = markerFilter;
         if (bedrooms && marker.bedrooms !== bedrooms) {
           return false;
         }
         if (bathrooms && marker.bathrooms !== bathrooms) {
+          return false;
+        }
+
+        const propetyTypes = marker.properties.bing_categories.map(
+          (f: any) => f.CategoryName
+        );
+        console.log(
+          "propetyTypes",
+          propertyType,
+          propetyTypes !== "",
+          propetyTypes.indexOf(propertyType) === -1
+        );
+        if (
+          propertyType &&
+          propetyTypes !== "" &&
+          propetyTypes.indexOf(propertyType) === -1
+        ) {
           return false;
         }
         return true;

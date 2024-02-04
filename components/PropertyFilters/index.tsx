@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { NumberFilter } from "@components/NumberFilter";
+import { DropDownFilter } from "../DropDownFilter";
 
 const categories = [
   "Upscale Living",
@@ -8,6 +9,14 @@ const categories = [
   "Resort Style Pool",
   "Situate Downtown",
   "Clubhouse",
+];
+
+const propertyTypes = [
+  "Apartments",
+  "Apartment Rental Agencies",
+  "Housing Development",
+  "Townhouse Complex",
+  "Real Estate Rental Agency",
 ];
 
 export type Filter = {
@@ -22,7 +31,9 @@ export type Filter = {
 enum NumberFilterType {
   bedrooms,
   bathrooms,
+  propertyType,
 }
+
 type PropertyFiltersProps = {
   filterInit: Filter;
   setApplyFilter: React.Dispatch<React.SetStateAction<Filter>>;
@@ -46,7 +57,7 @@ export const PropertyFilters = ({
   };
 
   return (
-    <div className="p-2  bg-white rounded-lg w-fit ">
+    <div className="p-2 flex flex-col gap-5 bg-white rounded-lg w-fit ">
       <div className="flex flex-row gap-2 align-middle items-center">
         <NumberFilter
           filterName="No of Bedrooms"
@@ -58,9 +69,15 @@ export const PropertyFilters = ({
           number={filter.bathrooms}
           setValue={setFilterValue(NumberFilterType.bathrooms)}
         />
+        <DropDownFilter
+          filterName={"Property Type"}
+          valueList={propertyTypes}
+          value={filter.propertyType}
+          setValue={setFilterValue(NumberFilterType.propertyType)}
+        />
       </div>
 
-      <div className="flex flex-row gap-4">
+      <div className="flex flex-row gap-4 justify-center">
         <div className="border select-none  p-3 rounded-lg  cursor-pointer">
           Clear Filters
         </div>
