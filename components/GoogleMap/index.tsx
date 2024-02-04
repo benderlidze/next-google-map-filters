@@ -1,12 +1,10 @@
 "use client";
-import React, { use, useEffect, useState } from "react";
-
+import React, { useState } from "react";
 import { APIProvider, Map, ControlPosition } from "@vis.gl/react-google-maps";
-import { IFilter, POIFilter } from "@components/POIFilter";
 import { AutocompletePlaces } from "@components/Directions";
-import { Marker, Markers } from "@components/Markers";
+import { Markers } from "@components/Markers";
 import { POIMArkers } from "../POIMarkers";
-import { PropertyFilters } from "../PropertyFilters";
+import { Filter, PropertyFilters } from "@components/PropertyFilters";
 
 export type MapConfig = {
   id: string;
@@ -16,12 +14,22 @@ export type MapConfig = {
   styles?: google.maps.MapTypeStyle[];
 };
 
+const filterInit = {
+  prefferedCategory: {},
+  bedrooms: 0,
+  bathrooms: 0,
+  propertyType: "",
+} as Filter;
+
 export const GoogleMap = () => {
-  const handleMapClick = () => {};
+  const [markerFilter, setMarkerFilter] = useState<Filter>(filterInit);
 
   return (
-    <div className="w-full h-[600px] ">
-      <PropertyFilters />
+    <div className="flex flex-col gap-3 w-full h-[700px] ">
+      <PropertyFilters
+        filterInit={markerFilter}
+        setApplyFilter={setMarkerFilter}
+      />
       <APIProvider
         apiKey={process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || ""}
         libraries={["places"]}
@@ -41,10 +49,9 @@ export const GoogleMap = () => {
           zoomControlOptions={{
             position: ControlPosition.TOP_RIGHT,
           }}
-          onClick={handleMapClick}
         >
           <POIMArkers />
-          <Markers />
+          <Markers markerFilter={markerFilter} />
         </Map>
         <AutocompletePlaces />
       </APIProvider>

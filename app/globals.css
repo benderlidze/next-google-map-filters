@@ -24,6 +24,7 @@ body {
       rgb(var(--background-end-rgb))
     )
     rgb(var(--background-start-rgb));
+  font-family: Verdana, Tahoma, sans-serif;
 }
 
 @layer utilities {
@@ -32,4 +33,6 @@ body {
   }
 }
 
-.gm-style iframe + div { border:none!important; }
+.gm-style iframe + div {
+  border: none !important;
+}

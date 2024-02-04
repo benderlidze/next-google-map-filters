@@ -1,4 +1,4 @@
-import { IPOI } from "@components/GoogleMap";
+import { IPOI } from "@components/POIMarkers";
 
 type POICardProps = {
   poiData: IPOI;

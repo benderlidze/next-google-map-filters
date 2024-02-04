@@ -2,10 +2,7 @@ import { AdvancedMarker, useMap } from "@vis.gl/react-google-maps";
 import { useEffect, useState } from "react";
 import { PropertyCard } from "@components/PropertyCard";
 import { MapOverlay } from "@components/MapOverlay";
-
-type MarkersProps = {
-  markers: Marker[];
-};
+import { Filter } from "../PropertyFilters";
 
 export type Marker = {
   id: number;
@@ -17,20 +14,40 @@ export type Marker = {
   latitude: number;
   longitude: number;
   state: string;
+
+  bedrooms: number;
+  bathrooms: number;
+  sqFt: number;
+  propertyType: string;
 };
 
-export const Markers = () => {
+type MarkersProps = {
+  markerFilter: Filter;
+};
+
+export const Markers = ({ markerFilter }: MarkersProps) => {
   const map = useMap();
   const [activeMarker, setActiveMarker] = useState<Marker | null>(null);
   const [markers, setMarkers] = useState<Marker[]>([]);
+  const [filteredMarkers, setFilteredMarkers] = useState<Marker[]>([]);
 
   const fetchData = async () => {
     const res = await fetch("data.json");
     const data = await res.json();
     const locations = data?.data?.livingLocations?.collection;
     if (locations?.length > 0) {
-      console.log("locations", locations);
-      setMarkers(locations);
+      //TODO remove random filters
+      //FILL MARKERS WITH RANDOM DATA
+      const randomFiltersPropsTEST = locations.map((l: any) => ({
+        ...l,
+        bedrooms: Math.floor(Math.random() * 5) + 1,
+        bathrooms: Math.floor(Math.random() * 5) + 1,
+        sqFt: Math.floor(Math.random() * 1000) + 500,
+      }));
+
+      console.log("randomFiltersPropsTEST", randomFiltersPropsTEST);
+      setMarkers(randomFiltersPropsTEST);
+      setFilteredMarkers(randomFiltersPropsTEST);
     }
   };
 
@@ -39,25 +56,51 @@ export const Markers = () => {
   }, []);
 
   useEffect(() => {
+    fitBounds();
+  }, [map, filteredMarkers]);
+
+  useEffect(() => {
+    filterMarkers();
+  }, [markerFilter]);
+
+  const filterMarkers = () => {
+    if (markerFilter) {
+      const filteredMarkers = markers.filter((marker) => {
+        const { bedrooms, bathrooms } = markerFilter;
+        if (bedrooms && marker.bedrooms !== bedrooms) {
+          return false;
+        }
+        if (bathrooms && marker.bathrooms !== bathrooms) {
+          return false;
+        }
+        return true;
+      });
+      setFilteredMarkers(filteredMarkers);
+    }
+  };
+
+  const fitBounds = () => {
+    console.log("filteredMarkers", filteredMarkers);
     if (map) {
       const bounds = new google.maps.LatLngBounds();
-      markers.forEach((marker) => {
+      filteredMarkers.forEach((marker) => {
         bounds.extend(
           new google.maps.LatLng(+marker.latitude, +marker.longitude)
         );
       });
       map.fitBounds(bounds);
     }
-  }, [map, markers]);
+  };
 
   const handleMarkerClick = (marker: Marker) => {
     setActiveMarker(marker);
   };
+
   return (
     <div>
       <>
-        {markers.length > 0 &&
-          markers.map((marker) => {
+        {filteredMarkers.length > 0 &&
+          filteredMarkers.map((marker) => {
             const { id, latitude: lat, longitude: lng } = marker;
             return (
               <AdvancedMarker

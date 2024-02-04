@@ -1,37 +1,75 @@
-import { useState } from "react";
+import React, { useState } from "react";
+import { NumberFilter } from "@components/NumberFilter";
 
-export const PropertyFilters = () => {
-  const [numberOfBedrooms, setNumberOfBedrooms] = useState<number>(0);
+const categories = [
+  "Upscale Living",
+  "Pet Friendly",
+  "Fitness Center",
+  "Resort Style Pool",
+  "Situate Downtown",
+  "Clubhouse",
+];
+
+export type Filter = {
+  prefferedCategory: string;
+  bedrooms: number;
+  bathrooms: number;
+  propertyType: string;
+  minSqft: number;
+  maxSqft: number;
+};
+
+enum NumberFilterType {
+  bedrooms,
+  bathrooms,
+}
+type PropertyFiltersProps = {
+  filterInit: Filter;
+  setApplyFilter: React.Dispatch<React.SetStateAction<Filter>>;
+};
+
+export const PropertyFilters = ({
+  filterInit,
+  setApplyFilter,
+}: PropertyFiltersProps) => {
+  const [filter, setFilter] = useState<Filter>(filterInit);
+  const setFilterValue = (name: NumberFilterType) => {
+    return (value: string | number) =>
+      setFilter((prev) => ({
+        ...prev,
+        [NumberFilterType[name]]: value,
+      }));
+  };
+
+  const handleApplyFilters = () => {
+    setApplyFilter(filter);
+  };
 
   return (
-    <div className="p-2 bg-white rounded-lg w-fit">
-      <div className="p-2  w-fit">
-        No of Bedrooms
-        <div className="flex flex-row gap-2 align-middle items-center">
-          <div
-            className="border w-fit px-3 select-none border-gray-200 p-2 cursor-pointer :hover:border-gray-400"
-            onClick={() =>
-              setNumberOfBedrooms((prev) => (prev > 0 ? prev - 1 : prev))
-            }
-          >
-            -
-          </div>
-          <div className="w-5 flex justify-center">{numberOfBedrooms}</div>
-          <div
-            className="border w-fit px-3 select-none border-gray-200 p-2 cursor-pointer :hover:border-gray-400"
-            onClick={() =>
-              setNumberOfBedrooms((prev) => {
-                return prev + 1;
-              })
-            }
-          >
-            +
-          </div>
-        </div>
+    <div className="p-2  bg-white rounded-lg w-fit ">
+      <div className="flex flex-row gap-2 align-middle items-center">
+        <NumberFilter
+          filterName="No of Bedrooms"
+          number={filter.bedrooms}
+          setValue={setFilterValue(NumberFilterType.bedrooms)}
+        />
+        <NumberFilter
+          filterName="No of Bathrooms"
+          number={filter.bathrooms}
+          setValue={setFilterValue(NumberFilterType.bathrooms)}
+        />
       </div>
 
-      <div className="text-white select-none bg-slate-800 p-3 rounded-lg  cursor-pointer">
-        Apply Filters
+      <div className="flex flex-row gap-4">
+        <div className="border select-none  p-3 rounded-lg  cursor-pointer">
+          Clear Filters
+        </div>
+        <div
+          onClick={handleApplyFilters}
+          className="text-white select-none bg-slate-800 p-3 rounded-lg  cursor-pointer"
+        >
+          Apply Filters
+        </div>
       </div>
     </div>
   );
