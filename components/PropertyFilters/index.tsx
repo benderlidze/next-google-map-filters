@@ -1,15 +1,9 @@
 import React, { useState } from "react";
 import { NumberFilter } from "@components/NumberFilter";
 import { DropDownFilter } from "../DropDownFilter";
-
-const categories = [
-  "Upscale Living",
-  "Pet Friendly",
-  "Fitness Center",
-  "Resort Style Pool",
-  "Situate Downtown",
-  "Clubhouse",
-];
+import { CategoryFilter } from "../CategoryFilter";
+import { create } from "domain";
+import { createPortal } from "react-dom";
 
 const propertyTypes = [
   "Apartments",
@@ -20,7 +14,7 @@ const propertyTypes = [
 ];
 
 export type Filter = {
-  prefferedCategory: string;
+  categroryList: string[];
   bedrooms: number;
   bathrooms: number;
   propertyType: string;
@@ -29,6 +23,7 @@ export type Filter = {
 };
 
 enum NumberFilterType {
+  categroryList,
   bedrooms,
   bathrooms,
   propertyType,
@@ -44,8 +39,10 @@ export const PropertyFilters = ({
   setApplyFilter,
 }: PropertyFiltersProps) => {
   const [filter, setFilter] = useState<Filter>(filterInit);
+  const [isFiltersOpen, setIsFiltersOpen] = useState(false);
+
   const setFilterValue = (name: NumberFilterType) => {
-    return (value: string | number) =>
+    return (value: string | number | string[]) =>
       setFilter((prev) => ({
         ...prev,
         [NumberFilterType[name]]: value,
@@ -56,38 +53,89 @@ export const PropertyFilters = ({
     setApplyFilter(filter);
   };
 
-  return (
-    <div className="p-2 flex flex-col gap-5 bg-white rounded-lg w-fit ">
-      <div className="flex flex-row gap-2 align-middle items-center">
-        <NumberFilter
-          filterName="No of Bedrooms"
-          number={filter.bedrooms}
-          setValue={setFilterValue(NumberFilterType.bedrooms)}
-        />
-        <NumberFilter
-          filterName="No of Bathrooms"
-          number={filter.bathrooms}
-          setValue={setFilterValue(NumberFilterType.bathrooms)}
-        />
-        <DropDownFilter
-          filterName={"Property Type"}
-          valueList={propertyTypes}
-          value={filter.propertyType}
-          setValue={setFilterValue(NumberFilterType.propertyType)}
-        />
-      </div>
+  const handleClose = () => {
+    setIsFiltersOpen(false);
+  };
 
-      <div className="flex flex-row gap-4 justify-center">
-        <div className="border select-none  p-3 rounded-lg  cursor-pointer">
-          Clear Filters
-        </div>
-        <div
-          onClick={handleApplyFilters}
-          className="text-white select-none bg-slate-800 p-3 rounded-lg  cursor-pointer"
-        >
-          Apply Filters
-        </div>
-      </div>
+  return (
+    <div>
+      <button
+        onClick={() => setIsFiltersOpen(true)}
+        className=" text-black border bg-white border-gray-400 p-2 rounded-md"
+      >
+        Filter
+      </button>
+
+      {isFiltersOpen &&
+        createPortal(
+          <>
+            <div className="absolute flex flex-row-reverse w-full h-full z-10 top-0  bg-slate-700 bg-opacity-50 ">
+              <div className="p-4 flex flex-col gap-5 bg-white w-3/5 h-full">
+                <div className=" flex flex-row justify-between items-center ">
+                  <div className="text-xl">PREFERRED CATEGORY</div>
+                  <div>
+                    <button
+                      onClick={handleClose}
+                      className="text-black p-2 rounded-full hover:bg-slate-100"
+                    >
+                      <svg
+                        className="h-6 w-6"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth="2"
+                          d="M6 18L18 6M6 6l12 12"
+                        ></path>
+                      </svg>
+                    </button>
+                  </div>
+                </div>
+                <div className="flex flex-row gap-2 align-middle items-center">
+                  <CategoryFilter
+                    selectedCategories={filter.categroryList}
+                    setValue={setFilterValue(NumberFilterType.categroryList)}
+                  />
+                </div>
+                <div className="text-xl">FILTER RESULTS BY</div>
+                <div className="flex flex-row gap-2 align-middle items-center">
+                  <NumberFilter
+                    filterName="No of Bedrooms"
+                    number={filter.bedrooms}
+                    setValue={setFilterValue(NumberFilterType.bedrooms)}
+                  />
+                  <NumberFilter
+                    filterName="No of Bathrooms"
+                    number={filter.bathrooms}
+                    setValue={setFilterValue(NumberFilterType.bathrooms)}
+                  />
+                  <DropDownFilter
+                    filterName={"Property Type"}
+                    valueList={propertyTypes}
+                    value={filter.propertyType}
+                    setValue={setFilterValue(NumberFilterType.propertyType)}
+                  />
+                </div>
+                <div className="flex flex-row gap-4 justify-center">
+                  <div className="border select-none  p-3 rounded-lg  cursor-pointer">
+                    Clear Filters
+                  </div>
+                  <div
+                    onClick={handleApplyFilters}
+                    className="text-white select-none bg-slate-800 p-3 rounded-lg  cursor-pointer"
+                  >
+                    Apply Filters
+                  </div>
+                </div>
+              </div>
+            </div>
+          </>,
+          document.body
+        )}
     </div>
   );
 };

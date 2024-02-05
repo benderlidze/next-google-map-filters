@@ -16,10 +16,12 @@ export type MapConfig = {
 };
 
 const filterInit = {
-  prefferedCategory: {},
+  categroryList: [],
   bedrooms: 0,
   bathrooms: 0,
   propertyType: "",
+  minSqft: 0,
+  maxSqft: 0,
 } as Filter;
 
 export const GoogleMap = () => {
@@ -29,38 +31,44 @@ export const GoogleMap = () => {
 
   console.log("geometryRoute", geometryRoute);
   return (
-    <div className="flex flex-col gap-3 w-full h-[700px] ">
+    <div className="flex flex-col gap-3 w-full h-[800px] ">
+
+      
+
+      <div className="w-full h-full p-20">
       <PropertyFilters
         filterInit={markerFilter}
         setApplyFilter={setMarkerFilter}
       />
-      <APIProvider
-        apiKey={process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || ""}
-        libraries={["places"]}
-      >
-        <Map
-          id={"one-of-my-maps"}
-          mapId={"bf51a910020fa25a"}
-          zoom={9}
-          center={{ lat: 33.48359643064377, lng: -112.09282344673318 }}
-          gestureHandling={"greedy"}
-          disableDefaultUI={true}
-          style={{ borderRadius: "20px", border: "none" }}
-          fullscreenControl={false}
-          mapTypeControl={false}
-          streetViewControl={false}
-          zoomControl={true}
-          zoomControlOptions={{
-            position: ControlPosition.TOP_RIGHT,
-          }}
+      
+        <APIProvider
+          apiKey={process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || ""}
+          libraries={["places"]}
         >
-          <POIMArkers />
-          <Markers markerFilter={markerFilter} />
-          <DirectionsRenderer route={geometryRoute} />
-        </Map>
+          <Map
+            id={"one-of-my-maps"}
+            mapId={"bf51a910020fa25a"}
+            zoom={9}
+            center={{ lat: 33.48359643064377, lng: -112.09282344673318 }}
+            gestureHandling={"greedy"}
+            disableDefaultUI={true}
+            style={{ borderRadius: "20px", border: "none" }}
+            fullscreenControl={false}
+            mapTypeControl={false}
+            streetViewControl={false}
+            zoomControl={true}
+            zoomControlOptions={{
+              position: ControlPosition.TOP_RIGHT,
+            }}
+          >
+            <POIMArkers />
+            <Markers markerFilter={markerFilter} />
+            <DirectionsRenderer route={geometryRoute} />
+          </Map>
 
-        <Route setGeometryRoute={setGeometryRoute} />
-      </APIProvider>
+          <Route setGeometryRoute={setGeometryRoute} />
+        </APIProvider>
+      </div>
     </div>
   );
 };
