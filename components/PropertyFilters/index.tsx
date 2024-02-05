@@ -69,7 +69,7 @@ export const PropertyFilters = ({
     <div>
       <button
         onClick={() => setIsFiltersOpen(true)}
-        className=" text-black border bg-white border-gray-400 p-2 rounded-md"
+        className="text-black bg-white p-2 border rounded-lg hover:bg-slate-100"
       >
         Filter
       </button>

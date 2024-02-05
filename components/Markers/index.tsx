@@ -24,89 +24,22 @@ export type Marker = {
 };
 
 type MarkersProps = {
-  markerFilter: Filter;
+  markers: Marker[];
 };
 
-export const Markers = ({ markerFilter }: MarkersProps) => {
-  console.log("markerFilter", markerFilter);
-
+export const Markers = ({ markers }: MarkersProps) => {
   const map = useMap();
   const [activeMarker, setActiveMarker] = useState<Marker | null>(null);
-  const [markers, setMarkers] = useState<Marker[]>([]);
-  const [filteredMarkers, setFilteredMarkers] = useState<Marker[]>([]);
-
-  const fetchData = async () => {
-    const res = await fetch("data.json");
-    const data = await res.json();
-    const locations = data?.data?.livingLocations?.collection;
-    if (locations?.length > 0) {
-      //TODO remove random filters
-      //FILL MARKERS WITH RANDOM DATA
-      const randomFiltersPropsTEST = locations.map((l: any) => ({
-        ...l,
-        bedrooms: Math.floor(Math.random() * 5) + 1,
-        bathrooms: Math.floor(Math.random() * 5) + 1,
-        sqFt: Math.floor(Math.random() * 1000) + 500,
-      }));
-
-      console.log("randomFiltersPropsTEST", randomFiltersPropsTEST);
-      setMarkers(randomFiltersPropsTEST);
-      setFilteredMarkers(randomFiltersPropsTEST);
-    }
-  };
-
-  useEffect(() => {
-    fetchData();
-  }, []);
 
   useEffect(() => {
     fitBounds();
-  }, [map, filteredMarkers]);
-
-  useEffect(() => {
-    filterMarkers();
-  }, [markerFilter]);
-
-  const filterMarkers = () => {
-    console.log("markerFilter", markerFilter);
-    if (markerFilter) {
-      const filteredMarkers = markers.filter((marker) => {
-        const { bedrooms, bathrooms, propertyType } = markerFilter;
-        if (bedrooms && marker.bedrooms !== bedrooms) {
-          return false;
-        }
-
-        if (bathrooms && marker.bathrooms !== bathrooms) {
-          return false;
-        }
-
-        const propetyTypes = marker.properties.bing_categories.map(
-          (f: any) => f.CategoryName
-        );
-        console.log(
-          "propetyTypes",
-          propertyType,
-          propetyTypes !== "",
-          propetyTypes.indexOf(propertyType) === -1
-        );
-        if (
-          propertyType &&
-          propetyTypes !== "" &&
-          propetyTypes.indexOf(propertyType) === -1
-        ) {
-          return false;
-        }
-        return true;
-      });
-      setFilteredMarkers(filteredMarkers);
-    }
-  };
+  }, [map, markers]);
 
   const fitBounds = () => {
-    console.log("filteredMarkers", filteredMarkers);
+    console.log("filteredMarkers", markers);
     if (map) {
       const bounds = new google.maps.LatLngBounds();
-      filteredMarkers.forEach((marker) => {
+      markers.forEach((marker) => {
         bounds.extend(
           new google.maps.LatLng(+marker.latitude, +marker.longitude)
         );
@@ -122,8 +55,8 @@ export const Markers = ({ markerFilter }: MarkersProps) => {
   return (
     <div>
       <>
-        {filteredMarkers.length > 0 &&
-          filteredMarkers.map((marker) => {
+        {markers.length > 0 &&
+          markers.map((marker) => {
             const { id, latitude: lat, longitude: lng } = marker;
             return (
               <AdvancedMarker
