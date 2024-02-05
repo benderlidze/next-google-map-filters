@@ -28,6 +28,8 @@ type MarkersProps = {
 };
 
 export const Markers = ({ markerFilter }: MarkersProps) => {
+  console.log("markerFilter", markerFilter);
+
   const map = useMap();
   const [activeMarker, setActiveMarker] = useState<Marker | null>(null);
   const [markers, setMarkers] = useState<Marker[]>([]);
@@ -73,6 +75,7 @@ export const Markers = ({ markerFilter }: MarkersProps) => {
         if (bedrooms && marker.bedrooms !== bedrooms) {
           return false;
         }
+
         if (bathrooms && marker.bathrooms !== bathrooms) {
           return false;
         }

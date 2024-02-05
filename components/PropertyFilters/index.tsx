@@ -30,15 +30,17 @@ enum NumberFilterType {
 }
 
 type PropertyFiltersProps = {
-  filterInit: Filter;
+  initFilterValues: Filter;
+  filterVals: Filter;
   setApplyFilter: React.Dispatch<React.SetStateAction<Filter>>;
 };
 
 export const PropertyFilters = ({
-  filterInit,
+  initFilterValues,
+  filterVals,
   setApplyFilter,
 }: PropertyFiltersProps) => {
-  const [filter, setFilter] = useState<Filter>(filterInit);
+  const [filter, setFilter] = useState<Filter>(filterVals);
   const [isFiltersOpen, setIsFiltersOpen] = useState(false);
 
   const setFilterValue = (name: NumberFilterType) => {
@@ -47,6 +49,12 @@ export const PropertyFilters = ({
         ...prev,
         [NumberFilterType[name]]: value,
       }));
+  };
+
+  const handleClearFilters = () => {
+    console.log("filterInit ", initFilterValues);
+    setFilter(initFilterValues);
+    setApplyFilter(initFilterValues);
   };
 
   const handleApplyFilters = () => {
@@ -121,7 +129,10 @@ export const PropertyFilters = ({
                   />
                 </div>
                 <div className="flex flex-row gap-4 justify-center">
-                  <div className="border select-none  p-3 rounded-lg  cursor-pointer">
+                  <div
+                    onClick={handleClearFilters}
+                    className="border select-none  p-3 rounded-lg  cursor-pointer"
+                  >
                     Clear Filters
                   </div>
                   <div

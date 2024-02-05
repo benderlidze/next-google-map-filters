@@ -31,16 +31,14 @@ export const GoogleMap = () => {
 
   console.log("geometryRoute", geometryRoute);
   return (
-    <div className="flex flex-col gap-3 w-full h-[800px] ">
+    <div className=" w-full h-[800px] ">
+      <div className="flex flex-col gap-4 w-full h-full p-20 ">
+        <PropertyFilters
+          initFilterValues={filterInit}
+          filterVals={markerFilter}
+          setApplyFilter={setMarkerFilter}
+        />
 
-      
-
-      <div className="w-full h-full p-20">
-      <PropertyFilters
-        filterInit={markerFilter}
-        setApplyFilter={setMarkerFilter}
-      />
-      
         <APIProvider
           apiKey={process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || ""}
           libraries={["places"]}
