@@ -1,4 +1,9 @@
-import React, { ChangeEvent, useEffect, useState } from "react";
+import React, {
+  ChangeEvent,
+  KeyboardEventHandler,
+  useEffect,
+  useState,
+} from "react";
 import { useMapsLibrary } from "@vis.gl/react-google-maps";
 
 type AutocompletePlacesProps = {
@@ -17,6 +22,7 @@ export const AutocompletePlaces = ({
     google.maps.places.QueryAutocompletePrediction[] | null
   >([]);
   const [inputValue, setInputValue] = useState<string>("");
+  const [selectedPlace, setSelectedPlace] = useState(0);
 
   useEffect(() => {
     if (placesLibrary) setService(new placesLibrary.AutocompleteService());
@@ -48,9 +54,41 @@ export const AutocompletePlaces = ({
     setResults([]);
   };
 
+  const next = () => {
+    if (results && selectedPlace < results.length - 1) {
+      setSelectedPlace(selectedPlace + 1);
+    }
+  };
+  const prev = () => {
+    if (results && selectedPlace > 0) {
+      setSelectedPlace(selectedPlace - 1);
+    }
+  };
+
+  const handleKeyDown: KeyboardEventHandler<HTMLInputElement> = (ev) => {
+    switch (ev.key) {
+      case "ArrowUp":
+        ev.preventDefault();
+        prev();
+        break;
+      case "ArrowDown":
+        ev.preventDefault();
+        next();
+        break;
+      case "Enter":
+        ev.preventDefault();
+        results &&
+          results[selectedPlace] &&
+          handleSelectedPlace(results[selectedPlace]);
+        break;
+      default:
+        break;
+    }
+  };
+
   if (!service) return null;
 
-  console.log('results',results);
+  console.log("results", results, selectedPlace);
 
   return (
     <div className="flex-1">
@@ -61,12 +99,15 @@ export const AutocompletePlaces = ({
         tabIndex={0}
         onBlur={() => setResults([])}
         placeholder={placeHolder}
+        onKeyDown={handleKeyDown}
       />
       {results && results.length > 0 && (
         <ul className="bg-white mt-2 absolute w-96  text-ellipsis">
-          {results.map((place) => (
+          {results.map((place, index) => (
             <li
-              className="cursor-pointer whitespace-nowrap p-1 hover:bg-slate-100 overflow-hidden"
+              className={`cursor-pointer whitespace-nowrap p-1 hover:bg-slate-100 overflow-hidden ${
+                index === selectedPlace ? `bg-slate-100` : ""
+              }`}
               key={place.place_id}
               onClick={() => handleSelectedPlace(place)}
               onMouseDown={(e) => {
