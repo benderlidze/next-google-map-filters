@@ -9,11 +9,11 @@ export const MapOverlay = ({
     closeClick && closeClick();
   };
   return (
-    <div className="absolute top-5 left-5 flex flex-row">
-      {children}
+    <div className="absolute top-5 left-5 flex flex-row ">
+      <div className="w-[240px]">{children}</div>
       <div
         onClick={handleCloseClick}
-        className="mx-3 select-none p-1 px-2 bg-white rounded-full h-fit cursor-pointer"
+        className=" mx-3 select-none p-1 px-2 bg-white rounded-full h-fit cursor-pointer"
       >
         x
       </div>
