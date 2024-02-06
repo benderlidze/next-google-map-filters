@@ -1,4 +1,4 @@
-import { Marker } from "@components/Markers";
+import { Marker } from "@components/GoogleMap/Markers";
 
 type PropertyCardProps = {
   marker: Marker;

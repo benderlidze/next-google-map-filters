@@ -1,4 +1,4 @@
-import { AutocompletePlaces } from "@components/AutocompletePlaces";
+import { AutocompletePlaces } from "@components/GoogleMap/AutocompletePlaces";
 import { useEffect, useState } from "react";
 
 type Route = {

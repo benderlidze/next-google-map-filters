@@ -1,12 +1,12 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import { APIProvider, Map, ControlPosition } from "@vis.gl/react-google-maps";
-import { Marker, Markers } from "@components/Markers";
-import { POIMArkers } from "@components/POIMarkers";
-import { Filter, PropertyFilters } from "@components/PropertyFilters";
-import { Route } from "@components/Route";
-import { DirectionsRenderer } from "../DirectionRender";
-import { GridView } from "../GridView";
+import { Marker, Markers } from "@components/GoogleMap/Markers";
+import { POIMArkers } from "@components/GoogleMap/POIMarkers";
+import { Filter, PropertyFilters } from "@components/GoogleMap/PropertyFilters";
+import { Route } from "@components/GoogleMap/Route";
+import { DirectionsRenderer } from "@components/GoogleMap/DirectionRender";
+import { GridView } from "@components/GoogleMap/GridView";
 
 export type MapConfig = {
   id: string;

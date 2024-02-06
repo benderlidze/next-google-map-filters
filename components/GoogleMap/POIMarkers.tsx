@@ -1,8 +1,8 @@
 import { AdvancedMarker, useMap } from "@vis.gl/react-google-maps";
-import { IFilter, POIFilter } from "@components/POIFilter";
-import { MapOverlay } from "@components/MapOverlay";
+import { IFilter, POIFilter } from "@components/GoogleMap/POIFilter";
+import { MapOverlay } from "@components/GoogleMap/MapOverlay";
 import { useEffect, useState } from "react";
-import { POICard } from "@components/POICard";
+import { POICard } from "@components/GoogleMap/POICard";
 
 const poiFiltersList = [
   { name: "Restaurants", id: 0, icon: "", selected: true },

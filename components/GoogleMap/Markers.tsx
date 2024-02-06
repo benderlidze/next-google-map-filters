@@ -1,8 +1,7 @@
 import { AdvancedMarker, useMap } from "@vis.gl/react-google-maps";
 import { useEffect, useState } from "react";
-import { PropertyCard } from "@components/PropertyCard";
-import { MapOverlay } from "@components/MapOverlay";
-import { Filter } from "../PropertyFilters";
+import { PropertyCard } from "@components/GoogleMap/PropertyCard";
+import { MapOverlay } from "@components/GoogleMap/MapOverlay";
 
 export type Marker = {
   id: number;

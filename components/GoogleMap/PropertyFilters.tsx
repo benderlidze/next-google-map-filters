@@ -1,8 +1,7 @@
 import React, { useState } from "react";
-import { NumberFilter } from "@components/NumberFilter";
-import { DropDownFilter } from "../DropDownFilter";
-import { CategoryFilter } from "../CategoryFilter";
-import { create } from "domain";
+import { NumberFilter } from "@components/GoogleMap/NumberFilter";
+import { DropDownFilter } from "@components/GoogleMap/DropDownFilter";
+import { CategoryFilter } from "@components/GoogleMap/CategoryFilter";
 import { createPortal } from "react-dom";
 
 const propertyTypes = [
