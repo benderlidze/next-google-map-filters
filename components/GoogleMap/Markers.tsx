@@ -31,21 +31,21 @@ export const Markers = ({ markers }: MarkersProps) => {
   const [activeMarker, setActiveMarker] = useState<Marker | null>(null);
 
   useEffect(() => {
+    const fitBounds = () => {
+      console.log("filteredMarkers", markers);
+      if (map) {
+        const bounds = new google.maps.LatLngBounds();
+        markers.forEach((marker) => {
+          bounds.extend(
+            new google.maps.LatLng(+marker.latitude, +marker.longitude)
+          );
+        });
+        map.fitBounds(bounds);
+      }
+    };
+
     fitBounds();
   }, [map, markers]);
-
-  const fitBounds = () => {
-    console.log("filteredMarkers", markers);
-    if (map) {
-      const bounds = new google.maps.LatLngBounds();
-      markers.forEach((marker) => {
-        bounds.extend(
-          new google.maps.LatLng(+marker.latitude, +marker.longitude)
-        );
-      });
-      map.fitBounds(bounds);
-    }
-  };
 
   const handleMarkerClick = (marker: Marker) => {
     setActiveMarker(marker);

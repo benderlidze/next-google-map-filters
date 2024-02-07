@@ -7,6 +7,7 @@ import { Filter, PropertyFilters } from "@components/GoogleMap/PropertyFilters";
 import { Route } from "@components/GoogleMap/Route";
 import { DirectionsRenderer } from "@components/GoogleMap/DirectionRender";
 import { GridView } from "@components/GoogleMap/GridView";
+import { SearchBar } from "./SearchBar";
 
 export type MapConfig = {
   id: string;
@@ -29,6 +30,11 @@ export const GoogleMap = () => {
   const [markerFilter, setMarkerFilter] = useState<Filter>(filterInit);
   const [filteredMarkers, setFilteredMarkers] = useState<Marker[]>([]);
   const [showGrid, setShowGrid] = useState(false);
+
+  const [center, setCenter] = useState<{ lat: number; lng: number } | null>({
+    lat: 33.48359643064377,
+    lng: -112.09282344673318,
+  });
 
   const [geometryRoute, setGeometryRoute] =
     useState<google.maps.DirectionsResult | null>(null);
@@ -97,30 +103,33 @@ export const GoogleMap = () => {
   return (
     <div className=" w-full h-[800px] ">
       <div className="flex flex-col gap-4 w-full h-full p-20 ">
-        <div className="flex flex-row justify-between">
-          <PropertyFilters
-            initFilterValues={filterInit}
-            filterVals={markerFilter}
-            setApplyFilter={setMarkerFilter}
-          />
-          <button
-            onClick={handleShowGrid}
-            className="text-black bg-white p-2 border rounded-lg hover:bg-slate-100"
-          >
-            Show Grid
-          </button>
-        </div>
-        {showGrid && <GridView markers={filteredMarkers} />}
-
         <APIProvider
           apiKey={process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || ""}
           libraries={["places"]}
         >
+          <div className="flex flex-row justify-between">
+            <PropertyFilters
+              initFilterValues={filterInit}
+              filterVals={markerFilter}
+              setApplyFilter={setMarkerFilter}
+            />
+            <SearchBar setSearchResults={setCenter} />
+            <div>
+              <button
+                onClick={handleShowGrid}
+                className="text-black bg-white p-2 border rounded-lg hover:bg-slate-100"
+              >
+                Show Grid
+              </button>
+            </div>
+          </div>
+
+          {showGrid && <GridView markers={filteredMarkers} />}
           <Map
             id={"one-of-my-maps"}
             mapId={"bf51a910020fa25a"}
             zoom={9}
-            center={{ lat: 33.48359643064377, lng: -112.09282344673318 }}
+            center={center}
             gestureHandling={"greedy"}
             disableDefaultUI={true}
             style={{

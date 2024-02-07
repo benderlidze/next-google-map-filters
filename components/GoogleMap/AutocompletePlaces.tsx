@@ -102,7 +102,7 @@ export const AutocompletePlaces = ({
         onKeyDown={handleKeyDown}
       />
       {results && results.length > 0 && (
-        <ul className="bg-white mt-2 absolute w-96  text-ellipsis">
+        <ul className="bg-white mt-2 absolute z-10 w-96  text-ellipsis">
           {results.map((place, index) => (
             <li
               className={`cursor-pointer whitespace-nowrap p-1 hover:bg-slate-100 overflow-hidden ${
