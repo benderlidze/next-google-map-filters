@@ -1,33 +1,53 @@
 import { AutocompletePlaces } from "@components/GoogleMap/AutocompletePlaces";
 import { useEffect, useState } from "react";
+import { Marker } from "@components/GoogleMap/Markers";
 
+type TRoute = {
+  type: "text" | "placeId";
+  value: string;
+};
 type Route = {
-  origin: string;
-  destination: string;
+  origin: TRoute;
+  destination: TRoute;
 };
 
 type RouteProps = {
+  selectedMarker: Marker | null;
   setGeometryRoute: (route: google.maps.DirectionsResult | null) => void;
 };
 
-export const Route = ({ setGeometryRoute }: RouteProps) => {
+export const Route = ({ setGeometryRoute, selectedMarker }: RouteProps) => {
   const [route, setRoute] = useState<Route>({
-    origin: "",
-    destination: "",
+    origin: { type: "text", value: "" },
+    destination: { type: "text", value: "" },
   });
 
   useEffect(() => {
-    if (route.origin && route.destination) {
-      console.log("Route", route);
+    console.log("  selectedMarker", selectedMarker);
+    if (selectedMarker) {
+      setRoute((prev) => ({
+        ...prev,
+        origin: {
+          type: "text",
+          value: `${selectedMarker.street} ${selectedMarker.state}`,
+        },
+      }));
+    }
+  }, [selectedMarker]);
 
+  useEffect(() => {
+    console.log("route", route);
+    if (route.origin.value !== "" && route.destination.value !== "") {
       const directions = new google.maps.DirectionsService();
-      console.log("directions", directions);
-
       const request = {
-        origin: { placeId: route.origin },
-        destination: { placeId: route.destination },
+        origin:
+          route.origin.type === "placeId"
+            ? { placeId: route.origin.value }
+            : route.origin.value,
+        destination: { placeId: route.destination.value },
         travelMode: google.maps.TravelMode.DRIVING,
       };
+
       console.log("request", request);
       directions.route(request, function (response, status) {
         if (status == google.maps.DirectionsStatus.OK) {
@@ -36,16 +56,21 @@ export const Route = ({ setGeometryRoute }: RouteProps) => {
         }
       });
     }
-  }, [route]);
+  }, [route, selectedMarker]);
+
+  const homeAddress = selectedMarker
+    ? `${selectedMarker.street} ${selectedMarker.state}`
+    : "";
 
   return (
     <div className="flex flex-row gap-4">
       <AutocompletePlaces
         placeHolder="From"
+        initialPlace={homeAddress}
         onSelect={(route) => {
           setRoute((prev) => ({
             ...prev,
-            origin: route.place_id || "",
+            origin: { type: "placeId", value: route.place_id || "" },
           }));
         }}
       />
@@ -54,7 +79,7 @@ export const Route = ({ setGeometryRoute }: RouteProps) => {
         onSelect={(route) => {
           setRoute((prev) => ({
             ...prev,
-            destination: route.place_id || "",
+            destination: { type: "placeId", value: route.place_id || "" },
           }));
         }}
       />

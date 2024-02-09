@@ -98,7 +98,7 @@ export const POIMArkers = () => {
         )}
       </>
 
-      <div className="absolute left-1/2 transform -translate-x-1/2 w-fit bottom-5 flex flex-col items-center justify-center gap-2">
+      <div className="absolute left-[15px]  bottom-5  ">
         {filtersOpen && (
           <POIFilter poiList={filtersList} setFiltersList={setFiltersList} />
         )}

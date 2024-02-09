@@ -27,6 +27,7 @@ const filterInit = {
 } as Filter;
 
 export const GoogleMap = () => {
+  const [selectedMarker, setSelectedMarker] = useState<Marker | null>(null);
   const [markerFilter, setMarkerFilter] = useState<Filter>(filterInit);
   const [filteredMarkers, setFilteredMarkers] = useState<Marker[]>([]);
   const [showGrid, setShowGrid] = useState(false);
@@ -146,11 +147,14 @@ export const GoogleMap = () => {
             }}
           >
             <POIMArkers />
-            <Markers markers={filteredMarkers} />
+            <Markers
+              markers={filteredMarkers}
+              setSelectedMarker={setSelectedMarker}
+            />
             <DirectionsRenderer route={geometryRoute} />
           </Map>
 
-          <Route setGeometryRoute={setGeometryRoute} />
+          <Route setGeometryRoute={setGeometryRoute} selectedMarker={selectedMarker}/>
         </APIProvider>
       </div>
     </div>

@@ -24,9 +24,10 @@ export type Marker = {
 
 type MarkersProps = {
   markers: Marker[];
+  setSelectedMarker: React.Dispatch<React.SetStateAction<Marker | null>>;
 };
 
-export const Markers = ({ markers }: MarkersProps) => {
+export const Markers = ({ markers, setSelectedMarker }: MarkersProps) => {
   const map = useMap();
   const [activeMarker, setActiveMarker] = useState<Marker | null>(null);
 
@@ -49,6 +50,7 @@ export const Markers = ({ markers }: MarkersProps) => {
 
   const handleMarkerClick = (marker: Marker) => {
     setActiveMarker(marker);
+    setSelectedMarker(marker);
   };
 
   return (

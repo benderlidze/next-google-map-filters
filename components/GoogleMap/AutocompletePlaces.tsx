@@ -8,11 +8,13 @@ import { useMapsLibrary } from "@vis.gl/react-google-maps";
 
 type AutocompletePlacesProps = {
   placeHolder: string;
+  initialPlace?: string;
   onSelect: (place: google.maps.places.QueryAutocompletePrediction) => void;
 };
 
 export const AutocompletePlaces = ({
   onSelect,
+  initialPlace,
   placeHolder,
 }: AutocompletePlacesProps) => {
   const placesLibrary = useMapsLibrary("places");
@@ -23,6 +25,10 @@ export const AutocompletePlaces = ({
   >([]);
   const [inputValue, setInputValue] = useState<string>("");
   const [selectedPlace, setSelectedPlace] = useState(0);
+
+  useEffect(() => {
+    setInputValue(initialPlace || "");
+  }, [initialPlace]);
 
   useEffect(() => {
     if (placesLibrary) setService(new placesLibrary.AutocompleteService());
