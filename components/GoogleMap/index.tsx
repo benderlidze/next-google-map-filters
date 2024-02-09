@@ -8,6 +8,7 @@ import { Route } from "@components/GoogleMap/Route";
 import { DirectionsRenderer } from "@components/GoogleMap/DirectionRender";
 import { GridView } from "@components/GoogleMap/GridView";
 import { SearchBar } from "./SearchBar";
+import { PropsDropDownList } from "./PropsDropDownList";
 
 export type MapConfig = {
   id: string;
@@ -31,12 +32,10 @@ export const GoogleMap = () => {
   const [markerFilter, setMarkerFilter] = useState<Filter>(filterInit);
   const [filteredMarkers, setFilteredMarkers] = useState<Marker[]>([]);
   const [showGrid, setShowGrid] = useState(false);
-
   const [center, setCenter] = useState<{ lat: number; lng: number } | null>({
     lat: 33.48359643064377,
     lng: -112.09282344673318,
   });
-
   const [geometryRoute, setGeometryRoute] =
     useState<google.maps.DirectionsResult | null>(null);
   const [markers, setMarkers] = useState<Marker[]>([]);
@@ -154,7 +153,12 @@ export const GoogleMap = () => {
             <DirectionsRenderer route={geometryRoute} />
           </Map>
 
-          <Route setGeometryRoute={setGeometryRoute} selectedMarker={selectedMarker}/>
+          <Route
+            setGeometryRoute={setGeometryRoute}
+            selectedMarker={selectedMarker}
+          />
+
+          <PropsDropDownList markers={markers} />
         </APIProvider>
       </div>
     </div>
