@@ -71,13 +71,14 @@ export const PropsDropDownList = ({ markers }: PropsDropDownList) => {
     search: string;
     replace: string;
   };
+
   const replaceAllCaseInsensitive = ({
     text,
     search,
     replace,
   }: ReplaceAllCaseInsensitive) => {
     const regex = new RegExp(search, "gi");
-    return text.replace(regex, replace);
+    return text.replace(regex, `<b>$&</b>`);
   };
 
   return (
