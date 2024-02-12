@@ -36,6 +36,7 @@ export const POIFilter = ({ poiList, setFiltersList }: POIFilterProps) => {
             className="flex select-none flex-row items-center gap-2 whitespace-nowrap "
           >
             <input
+              id={name}
               type="checkbox"
               className="w-4 h-4 cursor-pointer"
               checked={selected}

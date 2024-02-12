@@ -16,7 +16,7 @@ export const PropertyCard = ({ marker }: PropertyCardProps) => {
       <div className="relative">
         <img
           src={thumbnail}
-          className="rounded-lg w-fit bg-slate-300"
+          className="rounded-lg w-fit bg-slate-300 max-h-[250px] "
         />
         <div className="absolute top-2 left-2 ">
           <div className="bg-white flex flex-row p-2 rounded-lg align-middle gap-2">

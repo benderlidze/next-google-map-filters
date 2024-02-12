@@ -9,6 +9,7 @@ import { DirectionsRenderer } from "@components/GoogleMap/DirectionRender";
 import { GridView } from "@components/GoogleMap/GridView";
 import { SearchBar } from "./SearchBar";
 import { PropsDropDownList } from "./PropsDropDownList";
+import { csvParse } from "d3-dsv";
 
 export type MapConfig = {
   id: string;
@@ -41,21 +42,36 @@ export const GoogleMap = () => {
   const [markers, setMarkers] = useState<Marker[]>([]);
 
   const fetchData = async () => {
-    const res = await fetch("data.json");
-    const data = await res.json();
-    const locations = data?.data?.livingLocations?.collection;
+    const csvUrl = `https://docs.google.com/spreadsheets/d/e/2PACX-1vQ16MnkkuBPjJiE9owxU6ooL8uLeNRfNaXUama-jUN8tr9SP2cKo8mUOikxBTIEEJVpMMUBhFbfbD1E/pub?gid=0&single=true&output=csv`;
+    const res = await fetch(csvUrl);
+    const text = await res.text();
+    const locations = await csvParse(text);
+
+    // const res = await fetch("data.json");
+    // const data = await res.json();
+    // const locations = data?.data?.livingLocations?.collection;
     if (locations?.length > 0) {
       //TODO remove random filters
       //FILL MARKERS WITH RANDOM DATA
-      const randomFiltersPropsTEST = locations.map((l: any) => ({
+      const randomFiltersPropsTEST: Marker[] = locations.map((l: any) => ({
         ...l,
+        latitude: +l.lat,
+        longitude: +l.lng,
+        name: l["Property Name"],
+        street: l["Street"],
+        state: l["State"],
+        thumbnail: l["Photo URL"],
+        phone: l["Phone (MT Subsite)"],
+        stars: 5,
+        price: 10000000,
+
         bedrooms: Math.floor(Math.random() * 5) + 1,
         bathrooms: Math.floor(Math.random() * 5) + 1,
         sqFt: Math.floor(Math.random() * 1000) + 500,
       }));
 
       console.log("randomFiltersPropsTEST", randomFiltersPropsTEST);
-      setMarkers(randomFiltersPropsTEST);
+      setMarkers(randomFiltersPropsTEST as Marker[]);
       setFilteredMarkers(randomFiltersPropsTEST);
     }
   };

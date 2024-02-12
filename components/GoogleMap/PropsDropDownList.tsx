@@ -16,12 +16,11 @@ export const PropsDropDownList = ({ markers }: PropsDropDownList) => {
 
   const onInputChange = (ev: ChangeEvent<HTMLInputElement>) => {
     const value = ev.target.value;
-    console.log("value", value);
+    setInputValue(value);
   };
 
   const handleSelectedPlace = (place: Marker) => {
-    console.log("place", place);
-    const value = `${place.street} ${place.state}`;
+    const value = `${place.name}`;
     setInputValue(value);
     setIsOpen(false);
   };
@@ -43,6 +42,7 @@ export const PropsDropDownList = ({ markers }: PropsDropDownList) => {
 
   const handleKeyDown: KeyboardEventHandler<HTMLInputElement> = (ev) => {
     console.log("ev", selectedPlace, ev);
+    setIsOpen(true);
     switch (ev.key) {
       case "ArrowUp":
         ev.preventDefault();
@@ -56,8 +56,6 @@ export const PropsDropDownList = ({ markers }: PropsDropDownList) => {
         ev.preventDefault();
         handleSelectedPlace(markers[selectedPlace]);
         break;
-      default:
-        break;
     }
   };
 
@@ -68,41 +66,76 @@ export const PropsDropDownList = ({ markers }: PropsDropDownList) => {
     }
   };
 
+  type ReplaceAllCaseInsensitive = {
+    text: string;
+    search: string;
+    replace: string;
+  };
+  const replaceAllCaseInsensitive = ({
+    text,
+    search,
+    replace,
+  }: ReplaceAllCaseInsensitive) => {
+    const regex = new RegExp(search, "gi");
+    return text.replace(regex, replace);
+  };
+
   return (
     <div className="flex-1">
       <input
         ref={inputRef}
         className="p-2 rounded-xl border border-gray-300 w-full focus:outline-none focus:border-gray-500 transition-all duration-200 ease-in-out"
         value={inputValue}
-        // onChange={onInputChange}
+        onChange={onInputChange}
+        onKeyDown={handleKeyDown}
         tabIndex={0}
         onBlur={() => setIsOpen(false)}
         onFocus={() => setIsOpen(true)}
-        onClick={() => setIsOpen(true)}
+        onClick={() => {
+          setSelectedPlace(0);
+          setIsOpen(true);
+        }}
         placeholder={"From"}
-        onKeyDown={handleKeyDown}
       />
       {isOpen && markers && markers.length > 0 && (
         <ul
           ref={ulRef}
-          className="bg-white h-[200px] mt-2 absolute z-10 w-96  text-ellipsis overflow-y-auto"
+          className="bg-white max-h-[220px] mt-2 absolute z-10 w-96  text-ellipsis overflow-y-auto"
         >
-          {markers.map((place, index) => (
-            <li
-              className={`cursor-pointer whitespace-nowrap p-1 hover:bg-slate-100 overflow-hidden ${
-                index === selectedPlace ? `bg-slate-100` : ""
-              }`}
-              key={place.id}
-              onClick={() => handleSelectedPlace(place)}
-              onMouseDown={(e) => {
-                e.preventDefault(); // Prevents the input field from losing focus before handling the selection
-                handleSelectedPlace(place);
-                inputRef && inputRef.current && inputRef.current.blur();
-              }}
-            >
-              {place.street} {place.state}
-            </li>
-          ))}
+          {markers
+
+            .filter((place) => {
+              return place.name
+                .toLowerCase()
+                .includes(inputValue.toLowerCase());
+            })
+            .map((place, index) => {
+              // Example usage:
+
+              const replacedText = replaceAllCaseInsensitive({
+                text: place.name,
+                search: inputValue,
+                replace: `<span class="font-bold">${inputValue}</span>`,
+              });
+
+              return (
+                <li
+                  className={`cursor-pointer whitespace-nowrap p-2 hover:bg-slate-100 overflow-hidden ${
+                    index === selectedPlace ? `bg-slate-100` : ""
+                  }`}
+                  key={place.id}
+                  onClick={() => handleSelectedPlace(place)}
+                  onMouseDown={(e) => {
+                    e.preventDefault(); // Prevents the input field from losing focus before handling the selection
+                    handleSelectedPlace(place);
+                    inputRef && inputRef.current && inputRef.current.blur();
+                  }}
+                >
+                  <div dangerouslySetInnerHTML={{ __html: replacedText }}></div>
+                  <div className="text-xs">{place.street}</div>
+                </li>
+              );
+            })}
         </ul>
       )}
     </div>
