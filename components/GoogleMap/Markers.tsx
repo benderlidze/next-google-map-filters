@@ -55,15 +55,15 @@ export const Markers = ({ markers, setSelectedMarker }: MarkersProps) => {
 
   return (
     <div>
-      <>
+      <div>
         {markers.length > 0 &&
-          markers.map((marker) => {
-            const { id, latitude: lat, longitude: lng } = marker;
+          markers.map((marker, index) => {
+            const { latitude: lat, longitude: lng } = marker;
             return (
               <AdvancedMarker
                 position={{ lat: +lat, lng: +lng }}
                 onClick={() => handleMarkerClick(marker)}
-                key={marker.id}
+                key={index}
               >
                 <div
                   style={{
@@ -82,14 +82,19 @@ export const Markers = ({ markers, setSelectedMarker }: MarkersProps) => {
               </AdvancedMarker>
             );
           })}
-      </>
-      <>
+      </div>
+      <div>
         {activeMarker && (
-          <MapOverlay closeClick={() => setActiveMarker(null)}>
+          <MapOverlay
+            closeClick={() => {
+              setSelectedMarker(null);
+              setActiveMarker(null);
+            }}
+          >
             <PropertyCard marker={activeMarker} />
           </MapOverlay>
         )}
-      </>
+      </div>
     </div>
   );
 };

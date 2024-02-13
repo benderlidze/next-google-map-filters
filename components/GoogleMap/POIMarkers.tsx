@@ -4,6 +4,7 @@ import { MapOverlay } from "@components/GoogleMap/MapOverlay";
 import { useEffect, useState } from "react";
 import { POICard } from "@components/GoogleMap/POICard";
 import { csvParse } from "d3-dsv";
+import { Marker } from "./Markers";
 
 // const poiFiltersList = [
 //   { name: "Restaurants", id: 0, icon: "", selected: true },
@@ -38,7 +39,11 @@ export type IPOI = {
   property: string;
 };
 
-export const POIMArkers = () => {
+type POIMArkersProps = {
+  selectedProperty: Marker;
+};
+
+export const POIMArkers = ({ selectedProperty }: POIMArkersProps) => {
   const map = useMap();
   const [activePOI, setActivePOI] = useState<IPOI | null>(null);
   const [filtersList, setFiltersList] = useState<IFilter[]>(poiFiltersList);
@@ -51,7 +56,6 @@ export const POIMArkers = () => {
     const res = await fetch(csvUrl);
     const text = await res.text();
     const csv = await csvParse(text);
-    console.log("res", csv);
 
     const poiList = csv.map((poi: any) => {
       return {
@@ -86,38 +90,79 @@ export const POIMArkers = () => {
     };
   }, [map]);
 
+  useEffect(() => {
+    fitPOIBounds();
+  }, [selectedProperty, filtersList, map, POIList]);
+
+  const fitPOIBounds = () => {
+    if (!map) return;
+
+    const bounds = new google.maps.LatLngBounds();
+    const filtered = POIList.filter(
+      (poi) => poi.property === selectedProperty.name
+    )
+      .filter((poi) => {
+        const filter = filtersList.find((f) => f.name === poi.category);
+        return filter?.selected;
+      })
+      .map((poiMarker) => {
+        return new google.maps.LatLng(+poiMarker.lat, +poiMarker.lon);
+      });
+
+    //add selected property to bounds
+    filtered.push(
+      new google.maps.LatLng(
+        +selectedProperty.latitude,
+        +selectedProperty.longitude
+      )
+    );
+
+    console.log("filtered", filtered, filtered.length);
+
+    if (filtered.length > 1) {
+      filtered.forEach((poi) => {
+        bounds.extend(poi);
+      });
+
+      console.log("fit BOUNDS");
+      map.fitBounds(bounds);
+    }
+  };
+
   return (
     <>
       <>
         {POIList.length > 0 &&
-          POIList.filter((poi) => {
-            const filter = filtersList.find((f) => f.name === poi.category);
-            return filter?.selected;
-          }).map((poiMarker) => {
-            const { name, lat, lon: lng } = poiMarker;
-            return (
-              <AdvancedMarker
-                position={{ lat: +lat, lng: +lng }}
-                onClick={() => setActivePOI(poiMarker)}
-                key={poiMarker.name}
-              >
-                <div
-                  style={{
-                    width: 12,
-                    height: 12,
-                    position: "absolute",
-                    top: 0,
-                    left: 0,
-                    background: "blue",
-                    border: "1px solid white",
-                    borderRadius: "50%",
-                    transform: "translate(-50%, -50%)",
-                    cursor: "pointer",
-                  }}
-                ></div>
-              </AdvancedMarker>
-            );
-          })}
+          POIList.filter((poi) => poi.property === selectedProperty.name)
+            .filter((poi) => {
+              const filter = filtersList.find((f) => f.name === poi.category);
+              return filter?.selected;
+            })
+            .map((poiMarker) => {
+              const { name, lat, lon: lng } = poiMarker;
+              return (
+                <AdvancedMarker
+                  position={{ lat: +lat, lng: +lng }}
+                  onClick={() => setActivePOI(poiMarker)}
+                  key={poiMarker.name}
+                >
+                  <div
+                    style={{
+                      width: 12,
+                      height: 12,
+                      position: "absolute",
+                      top: 0,
+                      left: 0,
+                      background: "blue",
+                      border: "1px solid white",
+                      borderRadius: "50%",
+                      transform: "translate(-50%, -50%)",
+                      cursor: "pointer",
+                    }}
+                  ></div>
+                </AdvancedMarker>
+              );
+            })}
       </>
       <>
         {activePOI && (
@@ -127,7 +172,7 @@ export const POIMArkers = () => {
         )}
       </>
 
-      <div className="absolute left-[15px]  bottom-5  ">
+      <div className="absolute left-[15px]  bottom-5 z-10 ">
         {filtersOpen && (
           <POIFilter poiList={filtersList} setFiltersList={setFiltersList} />
         )}

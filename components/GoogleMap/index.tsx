@@ -161,7 +161,8 @@ export const GoogleMap = () => {
               position: ControlPosition.TOP_RIGHT,
             }}
           >
-            <POIMArkers />
+            {selectedMarker && <POIMArkers selectedProperty={selectedMarker} />}
+
             <Markers
               markers={filteredMarkers}
               setSelectedMarker={setSelectedMarker}

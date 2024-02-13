@@ -12,8 +12,6 @@ export const PropsDropDownList = ({ markers }: PropsDropDownList) => {
   const [isOpen, setIsOpen] = useState(false);
   const [inputValue, setInputValue] = useState<string>("");
 
-  console.log("markers", markers);
-
   const onInputChange = (ev: ChangeEvent<HTMLInputElement>) => {
     const value = ev.target.value;
     setInputValue(value);
@@ -41,7 +39,6 @@ export const PropsDropDownList = ({ markers }: PropsDropDownList) => {
   };
 
   const handleKeyDown: KeyboardEventHandler<HTMLInputElement> = (ev) => {
-    console.log("ev", selectedPlace, ev);
     setIsOpen(true);
     switch (ev.key) {
       case "ArrowUp":
