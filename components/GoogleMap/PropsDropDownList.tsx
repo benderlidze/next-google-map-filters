@@ -133,7 +133,7 @@ export const PropsDropDownList = ({ markers }: PropsDropDownList) => {
                   }}
                 >
                   <div dangerouslySetInnerHTML={{ __html: replacedText }}></div>
-                  <div className="text-xs">{place.street}</div>
+                  {/* <div className="text-xs">{place.street}</div> */}
                 </li>
               );
             })}
