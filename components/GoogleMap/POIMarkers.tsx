@@ -37,21 +37,25 @@ export type IPOI = {
   lat: number;
   lon: number;
   property: string;
+  phone: string;
 };
 
 type POIMArkersProps = {
-  selectedMarker: Marker | null;
+  // selectedMarker: Marker | null;
   selectedProperty: Marker;
   POIList: IPOI[];
+  activePOI: IPOI | null;
+  setActivePOI: React.Dispatch<React.SetStateAction<IPOI | null>>;
 };
 
 export const POIMArkers = ({
-  selectedMarker,
+  // selectedMarker,
+  activePOI,
+  setActivePOI,
   POIList,
   selectedProperty,
 }: POIMArkersProps) => {
   const map = useMap();
-  const [activePOI, setActivePOI] = useState<IPOI | null>(null);
   const [filtersList, setFiltersList] = useState<IFilter[]>(poiFiltersList);
   const [filtersOpen, setFiltersOpen] = useState(false);
 
@@ -127,7 +131,7 @@ export const POIMArkers = ({
                 <AdvancedMarker
                   position={{ lat: +lat, lng: +lng }}
                   onClick={() => setActivePOI(poiMarker)}
-                  key={poiMarker.name}
+                  key={poiMarker.address}
                 >
                   <div
                     style={{

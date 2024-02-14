@@ -43,7 +43,9 @@ export const GoogleMap = () => {
   const [geometryRoute, setGeometryRoute] =
     useState<google.maps.DirectionsResult | null>(null);
   const [markers, setMarkers] = useState<Marker[]>([]);
+
   const [POIList, setPOIList] = useState<IPOI[]>([]);
+  const [activePOI, setActivePOI] = useState<IPOI | null>(null);
 
   const fetchData = async () => {
     const csvUrl = `https://docs.google.com/spreadsheets/d/e/2PACX-1vQ16MnkkuBPjJiE9owxU6ooL8uLeNRfNaXUama-jUN8tr9SP2cKo8mUOikxBTIEEJVpMMUBhFbfbD1E/pub?gid=0&single=true&output=csv`;
@@ -94,6 +96,7 @@ export const GoogleMap = () => {
         lat: +poi["lat"],
         lon: +poi["lng"],
         property: poi["Property"],
+        phone: poi["Phone"],
       };
     });
 
@@ -198,13 +201,16 @@ export const GoogleMap = () => {
           >
             {selectedMarker && (
               <POIMArkers
-                selectedMarker={selectedMarker}
+                // selectedMarker={selectedMarker}
+                activePOI={activePOI}
+                setActivePOI={setActivePOI}
                 POIList={POIList}
                 selectedProperty={selectedMarker}
               />
             )}
 
             <Markers
+              activePOI={activePOI}
               markers={filteredMarkers}
               selectedMarker={selectedMarker}
               setSelectedMarker={setSelectedMarker}

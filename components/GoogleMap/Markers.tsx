@@ -2,6 +2,7 @@ import { AdvancedMarker, useMap } from "@vis.gl/react-google-maps";
 import { useEffect, useState } from "react";
 import { PropertyCard } from "@components/GoogleMap/PropertyCard";
 import { MapOverlay } from "@components/GoogleMap/MapOverlay";
+import { IPOI } from "./POIMarkers";
 
 export type Marker = {
   id: number;
@@ -23,6 +24,7 @@ export type Marker = {
 };
 
 type MarkersProps = {
+  activePOI: IPOI | null;
   markers: Marker[];
   selectedMarker: Marker | null;
   setSelectedMarker: React.Dispatch<React.SetStateAction<Marker | null>>;
@@ -32,6 +34,7 @@ type MarkersProps = {
 };
 
 export const Markers = ({
+  activePOI,
   markers,
   selectedMarker,
   setSelectedMarker,
@@ -95,7 +98,7 @@ export const Markers = ({
           })}
       </div>
       <div>
-        {activeMarker && selectedMarker && (
+        {activeMarker && selectedMarker && !activePOI && (
           <MapOverlay
             closeClick={() => {
               setActiveMarker(null);

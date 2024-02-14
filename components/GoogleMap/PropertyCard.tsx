@@ -12,7 +12,7 @@ export const PropertyCard = ({ marker }: PropertyCardProps) => {
   };
 
   return (
-    <div className="flex flex-col  bg-white rounded-xl shadow-lg p-3">
+    <div className="flex flex-col bg-white rounded-xl shadow-lg p-3">
       <div className="relative">
         <img
           src={thumbnail}
