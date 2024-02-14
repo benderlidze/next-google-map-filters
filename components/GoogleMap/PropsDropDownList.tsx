@@ -1,16 +1,33 @@
-import { ChangeEvent, KeyboardEventHandler, createRef, useState } from "react";
+import {
+  ChangeEvent,
+  KeyboardEventHandler,
+  createRef,
+  useEffect,
+  useState,
+} from "react";
 import { Marker } from "./Markers";
 
 type PropsDropDownList = {
   markers: Marker[];
+  selectedMarker: Marker | null;
 };
 
-export const PropsDropDownList = ({ markers }: PropsDropDownList) => {
+export const PropsDropDownList = ({
+  markers,
+  selectedMarker,
+}: PropsDropDownList) => {
   const inputRef = createRef<HTMLInputElement>();
   const ulRef = createRef<HTMLUListElement>();
   const [selectedPlace, setSelectedPlace] = useState(0);
   const [isOpen, setIsOpen] = useState(false);
   const [inputValue, setInputValue] = useState<string>("");
+
+  useEffect(() => {
+    if (selectedMarker) {
+      //setInputValue(selectedMarker.name);
+      handleSelectedPlace(selectedMarker);
+    }
+  }, [selectedMarker]);
 
   const onInputChange = (ev: ChangeEvent<HTMLInputElement>) => {
     const value = ev.target.value;
@@ -24,17 +41,20 @@ export const PropsDropDownList = ({ markers }: PropsDropDownList) => {
   };
 
   const next = () => {
-    if (markers && selectedPlace < markers.length - 1) {
+    const filtered = markers.filter((place) => {
+      return place.name.toLowerCase().includes(inputValue.toLowerCase());
+    });
+    if (filtered && selectedPlace < filtered.length - 1) {
       const index = selectedPlace + 1;
-      setSelectedPlace(index);
       scrollToItem(index);
+      setSelectedPlace(index);
     }
   };
   const prev = () => {
     if (markers && selectedPlace > 0) {
       const index = selectedPlace - 1;
-      setSelectedPlace(index);
       scrollToItem(index);
+      setSelectedPlace(index);
     }
   };
 
@@ -51,7 +71,10 @@ export const PropsDropDownList = ({ markers }: PropsDropDownList) => {
         break;
       case "Enter":
         ev.preventDefault();
-        handleSelectedPlace(markers[selectedPlace]);
+        const filtered = markers.filter((place) => {
+          return place.name.toLowerCase().includes(inputValue.toLowerCase());
+        });
+        handleSelectedPlace(filtered[selectedPlace]);
         break;
     }
   };
@@ -72,7 +95,6 @@ export const PropsDropDownList = ({ markers }: PropsDropDownList) => {
   const replaceAllCaseInsensitive = ({
     text,
     search,
-    replace,
   }: ReplaceAllCaseInsensitive) => {
     const regex = new RegExp(search, "gi");
     return text.replace(regex, `<b>$&</b>`);
@@ -81,8 +103,9 @@ export const PropsDropDownList = ({ markers }: PropsDropDownList) => {
   return (
     <div className="flex-1">
       <input
+        type="search"
         ref={inputRef}
-        className="p-2 rounded-xl border border-gray-300 w-full focus:outline-none focus:border-gray-500 transition-all duration-200 ease-in-out"
+        className="input-search p-2 rounded-xl border border-gray-300 w-full focus:outline-none focus:border-gray-500 transition-all duration-200 ease-in-out"
         value={inputValue}
         onChange={onInputChange}
         onKeyDown={handleKeyDown}
@@ -101,7 +124,6 @@ export const PropsDropDownList = ({ markers }: PropsDropDownList) => {
           className="bg-white max-h-[220px] mt-2 absolute z-10 w-96  text-ellipsis overflow-y-auto"
         >
           {markers
-
             .filter((place) => {
               return place.name
                 .toLowerCase()

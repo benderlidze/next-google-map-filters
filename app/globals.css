@@ -2,8 +2,6 @@
 @tailwind components;
 @tailwind utilities;
 
-
-
 body {
   color: rgb(var(--foreground-rgb));
   background: #d7dcdd;
@@ -18,4 +16,9 @@ body {
 
 .gm-style iframe + div {
   border: none !important;
+}
+
+.input-search::-webkit-search-cancel-button {
+  position: relative;
+  cursor: pointer;
 }

@@ -171,11 +171,13 @@ export const GoogleMap = () => {
           </Map>
 
           <Route
+            markers={markers}
             setGeometryRoute={setGeometryRoute}
             selectedMarker={selectedMarker}
+            setSelectedMarker={setSelectedMarker}
           />
 
-          <PropsDropDownList markers={markers} />
+          {/* <PropsDropDownList markers={markers} /> */}
         </APIProvider>
       </div>
     </div>

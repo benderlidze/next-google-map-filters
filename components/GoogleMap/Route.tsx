@@ -1,6 +1,7 @@
 import { AutocompletePlaces } from "@components/GoogleMap/AutocompletePlaces";
 import { useEffect, useState } from "react";
 import { Marker } from "@components/GoogleMap/Markers";
+import { PropsDropDownList } from "./PropsDropDownList";
 
 type TRoute = {
   type: "text" | "placeId";
@@ -12,11 +13,18 @@ type Route = {
 };
 
 type RouteProps = {
+  markers: Marker[];
   selectedMarker: Marker | null;
   setGeometryRoute: (route: google.maps.DirectionsResult | null) => void;
+  setSelectedMarker: React.Dispatch<React.SetStateAction<Marker | null>>;
 };
 
-export const Route = ({ setGeometryRoute, selectedMarker }: RouteProps) => {
+export const Route = ({
+  setSelectedMarker,
+  setGeometryRoute,
+  selectedMarker,
+  markers,
+}: RouteProps) => {
   const [route, setRoute] = useState<Route>({
     origin: { type: "text", value: "" },
     destination: { type: "text", value: "" },
@@ -64,7 +72,9 @@ export const Route = ({ setGeometryRoute, selectedMarker }: RouteProps) => {
 
   return (
     <div className="flex flex-row gap-4">
-      <AutocompletePlaces
+      <PropsDropDownList markers={markers} selectedMarker={selectedMarker} />
+
+      {/* <AutocompletePlaces
         placeHolder="From"
         initialPlace={homeAddress}
         onSelect={(route) => {
@@ -73,7 +83,8 @@ export const Route = ({ setGeometryRoute, selectedMarker }: RouteProps) => {
             origin: { type: "placeId", value: route.place_id || "" },
           }));
         }}
-      />
+      /> */}
+
       <AutocompletePlaces
         placeHolder="To"
         onSelect={(route) => {
