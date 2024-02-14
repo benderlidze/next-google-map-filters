@@ -165,44 +165,49 @@ export const PropsDropDownList = ({
         </div>
       </div>
       {isOpen && markers && markers.length > 0 && (
-        <ul
-          ref={ulRef}
-          className="bg-white max-h-[220px] mt-2 absolute z-10 w-96  text-ellipsis overflow-y-auto"
-        >
-          {markers
-            .filter((place) => {
-              return place.name
-                .toLowerCase()
-                .includes(inputValue.toLowerCase());
-            })
-            .map((place, index) => {
-              // Example usage:
+        <div className="relative">
+          <ul
+            ref={ulRef}
+            className="bg-white absolute max-h-[220px] min-w-full max-w-full mt-2 z-10 text-ellipsis overflow-y-auto overflow-x-hidden"
+            style={{ width: "inherit" }}
+          >
+            {markers
+              .filter((place) => {
+                return place.name
+                  .toLowerCase()
+                  .includes(inputValue.toLowerCase());
+              })
+              .map((place, index) => {
+                // Example usage:
 
-              const replacedText = replaceAllCaseInsensitive({
-                text: place.name,
-                search: inputValue,
-                replace: `<span class="font-bold">${inputValue}</span>`,
-              });
+                const replacedText = replaceAllCaseInsensitive({
+                  text: place.name,
+                  search: inputValue,
+                  replace: `<span class="font-bold">${inputValue}</span>`,
+                });
 
-              return (
-                <li
-                  className={`cursor-pointer whitespace-nowrap p-2 hover:bg-slate-100 overflow-hidden ${
-                    index === selectedPlace ? `bg-slate-100` : ""
-                  }`}
-                  key={place.id}
-                  onClick={() => handleSelectedPlace(place)}
-                  onMouseDown={(e) => {
-                    e.preventDefault(); // Prevents the input field from losing focus before handling the selection
-                    handleSelectedPlace(place);
-                    inputRef && inputRef.current && inputRef.current.blur();
-                  }}
-                >
-                  <div dangerouslySetInnerHTML={{ __html: replacedText }}></div>
-                  {/* <div className="text-xs">{place.street}</div> */}
-                </li>
-              );
-            })}
-        </ul>
+                return (
+                  <li
+                    className={`cursor-pointer whitespace-nowrap p-2 hover:bg-slate-100 overflow-hidden ${
+                      index === selectedPlace ? `bg-slate-100` : ""
+                    }`}
+                    key={place.street}
+                    onClick={() => handleSelectedPlace(place)}
+                    onMouseDown={(e) => {
+                      e.preventDefault(); // Prevents the input field from losing focus before handling the selection
+                      handleSelectedPlace(place);
+                      inputRef && inputRef.current && inputRef.current.blur();
+                    }}
+                  >
+                    <div
+                      dangerouslySetInnerHTML={{ __html: replacedText }}
+                    ></div>
+                    {/* <div className="text-xs">{place.street}</div> */}
+                  </li>
+                );
+              })}
+          </ul>
+        </div>
       )}
     </div>
   );

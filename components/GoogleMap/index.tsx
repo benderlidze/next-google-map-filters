@@ -216,6 +216,7 @@ export const GoogleMap = () => {
               setSelectedMarker={setSelectedMarker}
               setSelectedMarkerFromDropDown={setSelectedMarkerFromDropDown}
             />
+
             <DirectionsRenderer route={geometryRoute} />
           </Map>
 
