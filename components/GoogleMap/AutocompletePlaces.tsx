@@ -94,8 +94,6 @@ export const AutocompletePlaces = ({
 
   if (!service) return null;
 
-  console.log("results", results, selectedPlace);
-
   return (
     <div className="flex-1">
       <input

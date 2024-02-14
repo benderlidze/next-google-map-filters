@@ -40,42 +40,20 @@ export type IPOI = {
 };
 
 type POIMArkersProps = {
+  selectedMarker: Marker | null;
   selectedProperty: Marker;
+  POIList: IPOI[];
 };
 
-export const POIMArkers = ({ selectedProperty }: POIMArkersProps) => {
+export const POIMArkers = ({
+  selectedMarker,
+  POIList,
+  selectedProperty,
+}: POIMArkersProps) => {
   const map = useMap();
   const [activePOI, setActivePOI] = useState<IPOI | null>(null);
   const [filtersList, setFiltersList] = useState<IFilter[]>(poiFiltersList);
   const [filtersOpen, setFiltersOpen] = useState(false);
-  const [POIList, setPOIList] = useState<IPOI[]>([]);
-
-  const fetchPOI = async () => {
-    const csvUrl = `https://docs.google.com/spreadsheets/d/e/2PACX-1vQ16MnkkuBPjJiE9owxU6ooL8uLeNRfNaXUama-jUN8tr9SP2cKo8mUOikxBTIEEJVpMMUBhFbfbD1E/pub?gid=1370915233&single=true&output=csv`;
-    //const res = await fetch("poi.json");
-    const res = await fetch(csvUrl);
-    const text = await res.text();
-    const csv = await csvParse(text);
-
-    const poiList = csv.map((poi: any) => {
-      return {
-        name: poi["POI Name"],
-        category: poi["Category"],
-        address: poi["Address"],
-        lat: +poi["lat"],
-        lon: +poi["lng"],
-        property: poi["Property"],
-      };
-    });
-
-    if (csv?.length > 0) {
-      setPOIList(poiList);
-    }
-  };
-
-  useEffect(() => {
-    fetchPOI();
-  }, []);
 
   useEffect(() => {
     if (map) {
@@ -91,6 +69,7 @@ export const POIMArkers = ({ selectedProperty }: POIMArkersProps) => {
   }, [map]);
 
   useEffect(() => {
+    console.log("fitPOIBounds");
     fitPOIBounds();
   }, [selectedProperty, filtersList, map, POIList]);
 
@@ -117,15 +96,19 @@ export const POIMArkers = ({ selectedProperty }: POIMArkersProps) => {
       )
     );
 
-    console.log("filtered", filtered, filtered.length);
-
     if (filtered.length > 1) {
       filtered.forEach((poi) => {
         bounds.extend(poi);
       });
-
-      console.log("fit BOUNDS");
       map.fitBounds(bounds);
+    } else {
+      map.setCenter(
+        new google.maps.LatLng(
+          +selectedProperty.latitude,
+          +selectedProperty.longitude
+        )
+      );
+      map.setZoom(13);
     }
   };
 

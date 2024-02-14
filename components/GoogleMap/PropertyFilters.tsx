@@ -51,7 +51,6 @@ export const PropertyFilters = ({
   };
 
   const handleClearFilters = () => {
-    console.log("filterInit ", initFilterValues);
     setFilter(initFilterValues);
     setApplyFilter(initFilterValues);
   };

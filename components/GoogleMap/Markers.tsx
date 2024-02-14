@@ -24,16 +24,24 @@ export type Marker = {
 
 type MarkersProps = {
   markers: Marker[];
+  selectedMarker: Marker | null;
   setSelectedMarker: React.Dispatch<React.SetStateAction<Marker | null>>;
+  setSelectedMarkerFromDropDown: React.Dispatch<
+    React.SetStateAction<Marker | null>
+  >;
 };
 
-export const Markers = ({ markers, setSelectedMarker }: MarkersProps) => {
+export const Markers = ({
+  markers,
+  selectedMarker,
+  setSelectedMarker,
+  setSelectedMarkerFromDropDown,
+}: MarkersProps) => {
   const map = useMap();
   const [activeMarker, setActiveMarker] = useState<Marker | null>(null);
 
   useEffect(() => {
     const fitBounds = () => {
-      console.log("filteredMarkers", markers);
       if (map) {
         const bounds = new google.maps.LatLngBounds();
         markers.forEach((marker) => {
@@ -41,10 +49,13 @@ export const Markers = ({ markers, setSelectedMarker }: MarkersProps) => {
             new google.maps.LatLng(+marker.latitude, +marker.longitude)
           );
         });
-        map.fitBounds(bounds);
+        if (markers.length === 1) {
+          //map.setZoom(13);
+        } else {
+          map.fitBounds(bounds);
+        }
       }
     };
-
     fitBounds();
   }, [map, markers]);
 
@@ -84,11 +95,12 @@ export const Markers = ({ markers, setSelectedMarker }: MarkersProps) => {
           })}
       </div>
       <div>
-        {activeMarker && (
+        {activeMarker && selectedMarker && (
           <MapOverlay
             closeClick={() => {
-              setSelectedMarker(null);
               setActiveMarker(null);
+              setSelectedMarker(null);
+              setSelectedMarkerFromDropDown(null);
             }}
           >
             <PropertyCard marker={activeMarker} />

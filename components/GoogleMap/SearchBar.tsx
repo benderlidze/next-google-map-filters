@@ -21,13 +21,9 @@ export const SearchBar = ({ setSearchResults }: SearchBarProps) => {
   const handleSelectedPlace = (
     place: google.maps.places.QueryAutocompletePrediction
   ) => {
-    console.log("place", place);
     geocodingService?.geocode({ placeId: place.place_id }, (res) => {
-      console.log("res", res);
       if (res && res.length > 0) {
         const location = res[0].geometry.location as google.maps.LatLng;
-        console.log("location", location);
-
         setSearchResults({
           lat: location.lat(),
           lng: location.lng(),

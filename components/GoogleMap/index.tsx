@@ -1,8 +1,8 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { use, useEffect, useState } from "react";
 import { APIProvider, Map, ControlPosition } from "@vis.gl/react-google-maps";
 import { Marker, Markers } from "@components/GoogleMap/Markers";
-import { POIMArkers } from "@components/GoogleMap/POIMarkers";
+import { IPOI, POIMArkers } from "@components/GoogleMap/POIMarkers";
 import { Filter, PropertyFilters } from "@components/GoogleMap/PropertyFilters";
 import { Route } from "@components/GoogleMap/Route";
 import { DirectionsRenderer } from "@components/GoogleMap/DirectionRender";
@@ -29,6 +29,9 @@ const filterInit = {
 } as Filter;
 
 export const GoogleMap = () => {
+  const [selectedMarkerFromDropDown, setSelectedMarkerFromDropDown] =
+    useState<Marker | null>(null);
+
   const [selectedMarker, setSelectedMarker] = useState<Marker | null>(null);
   const [markerFilter, setMarkerFilter] = useState<Filter>(filterInit);
   const [filteredMarkers, setFilteredMarkers] = useState<Marker[]>([]);
@@ -40,6 +43,7 @@ export const GoogleMap = () => {
   const [geometryRoute, setGeometryRoute] =
     useState<google.maps.DirectionsResult | null>(null);
   const [markers, setMarkers] = useState<Marker[]>([]);
+  const [POIList, setPOIList] = useState<IPOI[]>([]);
 
   const fetchData = async () => {
     const csvUrl = `https://docs.google.com/spreadsheets/d/e/2PACX-1vQ16MnkkuBPjJiE9owxU6ooL8uLeNRfNaXUama-jUN8tr9SP2cKo8mUOikxBTIEEJVpMMUBhFbfbD1E/pub?gid=0&single=true&output=csv`;
@@ -70,14 +74,35 @@ export const GoogleMap = () => {
         sqFt: Math.floor(Math.random() * 1000) + 500,
       }));
 
-      console.log("randomFiltersPropsTEST", randomFiltersPropsTEST);
       setMarkers(randomFiltersPropsTEST as Marker[]);
       setFilteredMarkers(randomFiltersPropsTEST);
     }
   };
 
+  const fetchPOI = async () => {
+    const csvUrl = `https://docs.google.com/spreadsheets/d/e/2PACX-1vQ16MnkkuBPjJiE9owxU6ooL8uLeNRfNaXUama-jUN8tr9SP2cKo8mUOikxBTIEEJVpMMUBhFbfbD1E/pub?gid=1370915233&single=true&output=csv`;
+    //const res = await fetch("poi.json");
+    const res = await fetch(csvUrl);
+    const text = await res.text();
+    const csv = await csvParse(text);
+
+    const poiList = csv.map((poi: any) => {
+      return {
+        name: poi["POI Name"],
+        category: poi["Category"],
+        address: poi["Address"],
+        lat: +poi["lat"],
+        lon: +poi["lng"],
+        property: poi["Property"],
+      };
+    });
+
+    if (csv?.length > 0) {
+      setPOIList(poiList);
+    }
+  };
+
   const filterMarkers = () => {
-    console.log("markerFilter", markerFilter);
     if (markerFilter) {
       const filteredMarkers = markers.filter((marker) => {
         const { bedrooms, bathrooms, propertyType } = markerFilter;
@@ -105,17 +130,27 @@ export const GoogleMap = () => {
 
   useEffect(() => {
     fetchData();
+    fetchPOI();
   }, []);
 
   useEffect(() => {
     filterMarkers();
   }, [markerFilter]);
 
+  useEffect(() => {
+    // click on close button in a  drop down component
+    if (selectedMarkerFromDropDown) {
+      setFilteredMarkers([selectedMarkerFromDropDown]);
+    }
+    if (selectedMarkerFromDropDown === null) {
+      setFilteredMarkers(markers);
+    }
+  }, [selectedMarkerFromDropDown]);
+
   const handleShowGrid = () => {
     setShowGrid(!showGrid);
   };
 
-  console.log("geometryRoute", geometryRoute);
   return (
     <div className=" w-full h-[800px] ">
       <div className="flex flex-col gap-4 w-full h-full p-20 ">
@@ -161,11 +196,19 @@ export const GoogleMap = () => {
               position: ControlPosition.TOP_RIGHT,
             }}
           >
-            {selectedMarker && <POIMArkers selectedProperty={selectedMarker} />}
+            {selectedMarker && (
+              <POIMArkers
+                selectedMarker={selectedMarker}
+                POIList={POIList}
+                selectedProperty={selectedMarker}
+              />
+            )}
 
             <Markers
               markers={filteredMarkers}
+              selectedMarker={selectedMarker}
               setSelectedMarker={setSelectedMarker}
+              setSelectedMarkerFromDropDown={setSelectedMarkerFromDropDown}
             />
             <DirectionsRenderer route={geometryRoute} />
           </Map>
@@ -175,6 +218,7 @@ export const GoogleMap = () => {
             setGeometryRoute={setGeometryRoute}
             selectedMarker={selectedMarker}
             setSelectedMarker={setSelectedMarker}
+            setSelectedMarkerFromDropDown={setSelectedMarkerFromDropDown}
           />
 
           {/* <PropsDropDownList markers={markers} /> */}

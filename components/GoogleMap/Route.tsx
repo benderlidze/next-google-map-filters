@@ -16,12 +16,16 @@ type RouteProps = {
   markers: Marker[];
   selectedMarker: Marker | null;
   setGeometryRoute: (route: google.maps.DirectionsResult | null) => void;
+  setSelectedMarkerFromDropDown: React.Dispatch<
+    React.SetStateAction<Marker | null>
+  >;
   setSelectedMarker: React.Dispatch<React.SetStateAction<Marker | null>>;
 };
 
 export const Route = ({
-  setSelectedMarker,
+  setSelectedMarkerFromDropDown,
   setGeometryRoute,
+  setSelectedMarker,
   selectedMarker,
   markers,
 }: RouteProps) => {
@@ -31,7 +35,6 @@ export const Route = ({
   });
 
   useEffect(() => {
-    console.log("  selectedMarker", selectedMarker);
     if (selectedMarker) {
       setRoute((prev) => ({
         ...prev,
@@ -44,7 +47,6 @@ export const Route = ({
   }, [selectedMarker]);
 
   useEffect(() => {
-    console.log("route", route);
     if (route.origin.value !== "" && route.destination.value !== "") {
       const directions = new google.maps.DirectionsService();
       const request = {
@@ -56,10 +58,8 @@ export const Route = ({
         travelMode: google.maps.TravelMode.DRIVING,
       };
 
-      console.log("request", request);
       directions.route(request, function (response, status) {
         if (status == google.maps.DirectionsStatus.OK) {
-          console.log("response===>>>>", response);
           setGeometryRoute(response);
         }
       });
@@ -72,7 +72,12 @@ export const Route = ({
 
   return (
     <div className="flex flex-row gap-4">
-      <PropsDropDownList markers={markers} selectedMarker={selectedMarker} />
+      <PropsDropDownList
+        markers={markers}
+        selectedMarker={selectedMarker}
+        setSelectedMarkerFromDropDown={setSelectedMarkerFromDropDown}
+        setSelectedMarker={setSelectedMarker}
+      />
 
       {/* <AutocompletePlaces
         placeHolder="From"
