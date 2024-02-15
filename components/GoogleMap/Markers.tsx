@@ -1,5 +1,5 @@
 import { AdvancedMarker, useMap } from "@vis.gl/react-google-maps";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { PropertyCard } from "@components/GoogleMap/PropertyCard";
 import { MapOverlay } from "@components/GoogleMap/MapOverlay";
 import { IPOI } from "./POIMarkers";
@@ -40,12 +40,13 @@ export const Markers = ({
   setSelectedMarker,
   setSelectedMarkerFromDropDown,
 }: MarkersProps) => {
+  const isInitialLoad = useRef(false); //  Flag to ensure fitBounds runs only once
   const map = useMap();
   const [activeMarker, setActiveMarker] = useState<Marker | null>(null);
 
   useEffect(() => {
     const fitBounds = () => {
-      if (map) {
+      if (map && markers.length > 0) {
         const bounds = new google.maps.LatLngBounds();
         markers.forEach((marker) => {
           bounds.extend(
@@ -55,7 +56,9 @@ export const Markers = ({
         if (markers.length === 1) {
           //map.setZoom(13);
         } else {
-          map.fitBounds(bounds);
+          //run only once per component load
+          !isInitialLoad.current && map.fitBounds(bounds);
+          isInitialLoad.current = true;
         }
       }
     };
