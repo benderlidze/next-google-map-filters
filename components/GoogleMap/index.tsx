@@ -8,7 +8,6 @@ import { Route } from "@components/GoogleMap/Route";
 import { DirectionsRenderer } from "@components/GoogleMap/DirectionRender";
 import { GridView } from "@components/GoogleMap/GridView";
 import { SearchBar } from "./SearchBar";
-import { PropsDropDownList } from "./PropsDropDownList";
 import { csvParse } from "d3-dsv";
 
 export type MapConfig = {
@@ -181,7 +180,7 @@ export const GoogleMap = () => {
           {showGrid && <GridView markers={filteredMarkers} />}
           <Map
             id={"one-of-my-maps"}
-            mapId={"bf51a910020fa25a"}
+            mapId={"c96a271e5f111334"}
             zoom={9}
             center={center}
             gestureHandling={"greedy"}
