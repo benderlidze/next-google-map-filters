@@ -40,7 +40,15 @@ export const AutocompletePlaces = ({
       setResults([]);
       return;
     }
-    const request = { input: inputValue };
+
+    const searchBounds = {
+      south: 32.16042074962266,
+      west: -114.49292989375002,
+      north: 34.564174755440035,
+      east: -109.42273946406252,
+    };
+    const request = { input: inputValue, bounds: searchBounds }; //restrict to Phoenix area
+
     service.getQueryPredictions(request, (res) => {
       setResults(res);
     });
